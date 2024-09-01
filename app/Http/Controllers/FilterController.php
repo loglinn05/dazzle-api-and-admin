@@ -32,11 +32,12 @@ class FilterController extends Controller
                     }
                 ])
             ->get();
-        $filterList['sizes'] = Size::withCount([
-            'products' => function ($query) {
-                $query->withFilters();
-            }
-        ])
+        $filterList['sizes'] = Subcategory::find($subcategory_id)->
+            category->sizes()->withCount([
+                    'products' => function ($query) {
+                        $query->withFilters();
+                    }
+                ])
             ->get();
         $filterList['price']['min'] = Product::withFilters()->min('price') ?
             Product::withFilters()->min('price') :
@@ -68,6 +69,6 @@ class FilterController extends Controller
             }
         ])
             ->get();
-        return request()->input('filterValues');
+        return $filterList;
     }
 }

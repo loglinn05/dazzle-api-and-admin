@@ -8,6 +8,7 @@ export const useProductsStore = defineStore("products", () => {
     const toast = useToast();
 
     const products = ref([]);
+    const persist = ref(true);
     const currentProduct = ref({
         normalFormat: {},
         tableFormat: [],
@@ -41,7 +42,7 @@ export const useProductsStore = defineStore("products", () => {
                 productData
             )
             .then(() => {
-                localStorage.removeItem("createdProduct");
+                persist.value = false;
                 router.push("/products");
             })
             .catch((error) => {
@@ -151,6 +152,7 @@ export const useProductsStore = defineStore("products", () => {
     return {
         products,
         productsLoading,
+        persist,
         getProducts,
         createProduct,
         getProduct,

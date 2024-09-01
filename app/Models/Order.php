@@ -10,6 +10,14 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'email',
+        'shipping_address',
+        'total',
+        'status',
+    ];
+
     const UPDATED_AT = null;
 
     function products(): BelongsToMany

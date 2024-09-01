@@ -297,6 +297,7 @@ const product = ref({
 });
 
 const productsStore = useProductsStore();
+const { persist } = storeToRefs(productsStore);
 const { createProduct } = productsStore;
 
 const categoriesStore = useCategoriesStore();
@@ -419,8 +420,10 @@ const unwatch = watch(
 );
 
 function persistProduct() {
-    product.value.images = [];
-    localStorage.setItem("createdProduct", JSON.stringify(product.value));
+    if (persist.value) {
+        product.value.images = [];
+        localStorage.setItem("createdProduct", JSON.stringify(product.value));
+    }
 }
 
 onBeforeUnmount(() => {

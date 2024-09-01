@@ -7,6 +7,7 @@ use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
@@ -23,6 +24,7 @@ Route::post('/get-filter-list/{subcategory_id}', [FilterController::class, 'getF
 Route::get('/get-menu', MenuController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/checkout', [OrderController::class, 'checkout']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', function (Request $request) {
