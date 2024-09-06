@@ -2,10 +2,14 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { useHelpersStore } from "./helpersStore";
 
 export const useMaterialsStore = defineStore("materials", () => {
-    const router = useRouter();
+    const helpersStore = useHelpersStore();
+    const { handleError } = helpersStore;
+
     const toast = useToast();
+    const router = useRouter();
 
     const materials = ref([]);
     const materialsLoading = ref(false);
@@ -45,19 +49,7 @@ export const useMaterialsStore = defineStore("materials", () => {
                 router.push("/materials");
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 
@@ -99,19 +91,7 @@ export const useMaterialsStore = defineStore("materials", () => {
                 router.push(`/material/${materialId}`);
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 

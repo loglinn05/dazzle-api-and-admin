@@ -1,6 +1,6 @@
 <template>
     <Layout>
-        |<Button
+        <Button
             icon="pi pi-arrow-left"
             label="All Categories"
             class="p-0 mb-10"

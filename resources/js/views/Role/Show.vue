@@ -45,7 +45,23 @@
                     {{ toSentenceCase(data.key) }}
                 </template>
             </Column>
-            <Column field="value" header="Value"></Column>
+            <Column header="Value">
+                <template #body="{ data }">
+                    <div
+                        v-if="Array.isArray(data.value)"
+                        class="flex flex-col gap-y-3"
+                    >
+                        <div
+                            v-if="data.value?.length"
+                            v-for="item of data.value"
+                        >
+                            {{ item }}
+                        </div>
+                        <template v-else>—</template>
+                    </div>
+                    <span v-else>{{ data.value }}</span>
+                </template>
+            </Column>
         </DataTable>
     </Layout>
 </template>
@@ -56,8 +72,11 @@ import { useAuthStore } from "../../stores/authStore";
 import { useRolesStore } from "../../stores/rolesStore";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
-import { toSentenceCase } from "../../helpers";
+import { useHelpersStore } from "../../stores/helpersStore";
 import { useConfirm } from "primevue/useconfirm";
+
+const helpersStore = useHelpersStore();
+const { toSentenceCase } = helpersStore;
 
 const route = useRoute();
 const confirm = useConfirm();

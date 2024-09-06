@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Validator;
 
 class OrderController extends Controller
@@ -39,6 +42,7 @@ class OrderController extends Controller
                 $productId['id'],
                 ['product_quantity' => $productId['quantity']]
             );
+            Product::find($productId['id']);
         }
 
         $payment = (new User)->charge(
@@ -57,5 +61,52 @@ class OrderController extends Controller
                 'total' => $order->total
             ], 200);
         }
+    }
+
+    public function index()
+    {
+        return Order::all();
+    }
+
+    public function show($id)
+    {
+        return new OrderResource(Order::find($id));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $fields = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email:rfc',
+                Rule::unique('orders')->ignore($id)
+            ],
+            'shipping_address' => 'required|string|max:255',
+            'total' => 'required|numeric',
+            'status' => [
+                'required',
+                Rule::in(['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'returned'])
+            ],
+            'user_id' => 'integer|nullable',
+        ]);
+
+        $order = Order::find($id);
+        $order->name = $fields['name'];
+        $order->email = $fields['email'];
+        $order->shipping_address = $fields['shipping_address'];
+        $order->total = $fields['total'];
+        $order->status = $fields['status'];
+        $order->user()->associate(User::find($fields['user_id']));
+        $order->save();
+    }
+
+    public function getRecentOrders()
+    {
+        return OrderResource::collection(
+            Order::orderByDesc('created_at')
+                ->limit(5)
+                ->get()
+        );
     }
 }

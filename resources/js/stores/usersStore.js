@@ -3,11 +3,14 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "./authStore";
-import { isEmptyObject } from "../helpers";
+import { useHelpersStore } from "./helpersStore";
 
 export const useUsersStore = defineStore("users", () => {
-    const router = useRouter();
+    const helpersStore = useHelpersStore();
+    const { handleError } = helpersStore;
+
     const toast = useToast();
+    const router = useRouter();
 
     const users = ref([]);
     const usersLoading = ref(false);
@@ -39,24 +42,14 @@ export const useUsersStore = defineStore("users", () => {
             life: 3000,
         });
         axios
-            .post(`${import.meta.env.VITE_API_BASE_URL}/user/create`, userData)
+            .post(`${import.meta.env.VITE_API_BASE_URL}/user/create`, {
+                userData: userData,
+            })
             .then(() => {
                 router.push("/users");
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 
@@ -101,25 +94,13 @@ export const useUsersStore = defineStore("users", () => {
         axios
             .post(
                 `${import.meta.env.VITE_API_BASE_URL}/user/${userId}/update`,
-                userData
+                { userData: userData }
             )
-            .then(() => {
+            .then((response) => {
                 router.push(`/user/${userId}`);
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 

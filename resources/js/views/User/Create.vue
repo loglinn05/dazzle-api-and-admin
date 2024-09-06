@@ -11,39 +11,61 @@
             Add a user
         </h1>
         <div class="grid gap-y-10">
-            <FloatLabel>
-                <InputText id="name" v-model="user.name" class="sm:w-96 w-64" />
-                <label for="name">Name</label>
-            </FloatLabel>
-            <FloatLabel>
-                <InputText
-                    id="email"
-                    type="email"
-                    v-model="user.email"
-                    class="sm:w-96 w-64"
-                />
-                <label for="email">Email</label>
-            </FloatLabel>
-            <FloatLabel>
-                <InputText
-                    id="password"
-                    type="password"
-                    v-model="user.password"
-                    class="sm:w-96 w-64"
-                />
-                <label for="password">Password</label>
-            </FloatLabel>
-            <FloatLabel>
-                <InputText
-                    id="passwordConfirmation"
-                    type="password"
-                    v-model="user.password_confirmation"
-                    class="sm:w-96 w-64"
-                />
-                <label for="passwordConfirmation">Password confirmation</label>
-            </FloatLabel>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputText
+                        id="name"
+                        v-model="user.name"
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="name">Name</label>
+                </FloatLabel>
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputText
+                        id="email"
+                        type="email"
+                        v-model="user.email"
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="email">Email</label>
+                </FloatLabel>
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputText
+                        id="password"
+                        type="password"
+                        v-model="user.password"
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="password">Password</label>
+                </FloatLabel>
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputText
+                        id="passwordConfirmation"
+                        type="password"
+                        v-model="user.password_confirmation"
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="passwordConfirmation"
+                        >Password confirmation</label
+                    >
+                </FloatLabel>
+            </div>
             <MultiSelect
-                v-if="hasPermissions(['show roles', 'assign roles'])"
+                v-if="hasPermissions(['show roles'])"
                 v-model="user.roles"
                 display="chip"
                 :options="roles"
@@ -88,19 +110,8 @@ const { getRoles } = rolesStore;
 
 const { hasPermissions } = useAuthStore();
 
-const userData = new FormData();
-
 function gatherDataAndCreateUser() {
-    for (const key in user.value) {
-        if (!Array.isArray(user.value[key])) {
-            userData.append(key, user.value[key]);
-        } else {
-            for (let i = 0; i < user.value[key].length; i++) {
-                userData.append(`${key}[]`, user.value[key][i]);
-            }
-        }
-    }
-    createUser(userData);
+    createUser(JSON.stringify(user.value));
 }
 
 onBeforeMount(() => {

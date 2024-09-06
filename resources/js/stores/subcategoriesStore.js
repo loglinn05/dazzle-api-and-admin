@@ -2,11 +2,14 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
-import { useTypesStore } from "./typesStore";
+import { useHelpersStore } from "./helpersStore";
 
 export const useSubcategoriesStore = defineStore("subcategories", () => {
-    const router = useRouter();
+    const helpersStore = useHelpersStore();
+    const { handleError } = helpersStore;
+
     const toast = useToast();
+    const router = useRouter();
 
     const subcategories = ref([]);
     const subcategoriesLoading = ref(false);
@@ -65,19 +68,7 @@ export const useSubcategoriesStore = defineStore("subcategories", () => {
                 router.push("/subcategories");
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 
@@ -119,19 +110,7 @@ export const useSubcategoriesStore = defineStore("subcategories", () => {
                 router.push(`/subcategory/${subcategoryId}`);
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 

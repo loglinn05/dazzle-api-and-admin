@@ -5,16 +5,17 @@
         ></ConfirmPopup>
         <Button
             icon="pi pi-arrow-left"
-            label="All Users"
+            label="All Orders"
             class="p-0 mb-10"
             link
-            @click="$router.push(`/users`)"
+            @click="$router.push(`/orders`)"
         />
         <DataTable
-            :value="currentUser.tableFormat"
+            :value="currentOrder.tableFormat"
+            class="mb-10"
             pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
             :pt="{ column: { bodycell: { class: 'align-top' } } }"
-            :loading="usersLoading"
+            :loading="ordersLoading"
             pt:loadingIcon:class="text-pink-500"
             showGridlines
         >
@@ -23,17 +24,17 @@
                     class="flex sm:flex-row flex-col items-center gap-3 w-full"
                 >
                     <Button
-                        v-if="hasPermissions(['update users'])"
+                        v-if="hasPermissions(['update orders'])"
                         icon="pi pi-pencil"
-                        label="Edit User"
+                        label="Edit Order"
                         class="w-fit"
                         raised
-                        @click="$router.push(`/user/${$route.params.id}/edit`)"
+                        @click="$router.push(`/order/${$route.params.id}/edit`)"
                     />
                     <Button
-                        v-if="hasPermissions(['delete users'])"
+                        v-if="hasPermissions(['delete orders'])"
                         icon="pi pi-trash"
-                        label="Delete User"
+                        label="Delete Order"
                         class="w-fit"
                         raised
                         severity="danger"
@@ -48,19 +49,44 @@
             </Column>
             <Column header="Value">
                 <template #body="{ data }">
-                    <div
-                        v-if="Array.isArray(data.value)"
-                        class="flex flex-col gap-y-3"
-                    >
-                        <div
-                            v-if="data.value?.length"
-                            v-for="item of data.value"
+                    <span v-if="data.key == 'total'">
+                        {{ formatCurrency(data.value) }}
+                    </span>
+                    <span v-else-if="data.key != 'products'">{{
+                        data.value
+                    }}</span>
+                </template>
+            </Column>
+        </DataTable>
+        <h2 class="sm:text-3xl text-2xl text-pink-700 font-header mb-3">
+            Products
+        </h2>
+        <DataTable
+            :value="currentOrder.normalFormat.products"
+            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
+            :pt="{ column: { bodycell: { class: 'align-top' } } }"
+            :loading="ordersLoading"
+            pt:loadingIcon:class="text-pink-500"
+            showGridlines
+        >
+            <Column header="ID" field="id"></Column>
+            <Column header="Title" field="title">
+                <template #body="{ data }">
+                    <div class="min-w-60">
+                        <router-link
+                            :to="`/product/${data.id}`"
+                            class="underline hover:text-pink-500 transition-all duration-500"
                         >
-                            {{ item }}
-                        </div>
-                        <template v-else>—</template>
+                            {{ data.title }}
+                        </router-link>
                     </div>
-                    <span v-else>{{ data.value }}</span>
+                </template>
+            </Column>
+            <Column header="Price" field="price"></Column>
+            <Column header="Quantity" field="quantity"></Column>
+            <Column header="Subtotal">
+                <template #body="{ data }">
+                    {{ formatCurrency(data.price * data.quantity) }}
                 </template>
             </Column>
         </DataTable>
@@ -69,7 +95,7 @@
 
 <script setup>
 import { onBeforeMount } from "vue";
-import { useUsersStore } from "../../stores/usersStore";
+import { useOrdersStore } from "../../stores/ordersStore";
 import { useAuthStore } from "../../stores/authStore";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
@@ -77,19 +103,19 @@ import { useHelpersStore } from "../../stores/helpersStore";
 import { useConfirm } from "primevue/useconfirm";
 
 const helpersStore = useHelpersStore();
-const { toSentenceCase } = helpersStore;
+const { toSentenceCase, formatCurrency } = helpersStore;
 
 const route = useRoute();
 const confirm = useConfirm();
 
 const { hasPermissions } = useAuthStore();
 
-const usersStore = useUsersStore();
-const { currentUser, usersLoading } = storeToRefs(usersStore);
-const { getUser, deleteUser } = usersStore;
+const ordersStore = useOrdersStore();
+const { currentOrder, ordersLoading } = storeToRefs(ordersStore);
+const { getOrder, deleteOrder } = ordersStore;
 
 onBeforeMount(() => {
-    getUser(route.params.id);
+    getOrder(route.params.id);
 });
 
 const confirmDeletion = (event) => {
@@ -102,7 +128,7 @@ const confirmDeletion = (event) => {
         rejectLabel: "Cancel",
         acceptLabel: "Delete",
         accept: () => {
-            deleteUser(route.params.id);
+            deleteOrder(route.params.id);
         },
         reject: () => {},
     });

@@ -1,46 +1,69 @@
 <template>
     <Layout>
+        <Button
+            icon="pi pi-arrow-left"
+            label="All Products"
+            class="p-0 mb-10"
+            link
+            @click="$router.push(`/products`)"
+        />
         <h1 class="sm:text-4xl text-3xl text-pink-700 font-header pb-10">
             Add a product
         </h1>
         <div class="w-fit grid gap-y-10">
-            <FloatLabel>
-                <InputText
-                    id="title"
-                    v-model="product.title"
-                    class="sm:w-96 w-64"
-                />
-                <label for="title">Title</label>
-            </FloatLabel>
-            <FloatLabel>
-                <Textarea
-                    id="description"
-                    v-model="product.description"
-                    class="sm:w-96 w-64 h-32"
-                />
-                <label for="title">Description</label>
-            </FloatLabel>
-            <FloatLabel>
-                <InputText
-                    id="contents"
-                    v-model="product.contents"
-                    class="sm:w-96 w-64"
-                />
-                <label for="contents">Contents</label>
-            </FloatLabel>
-            <FloatLabel>
-                <InputNumber
-                    id="price"
-                    v-model="product.price"
-                    inputId="currency-us"
-                    mode="currency"
-                    currency="USD"
-                    locale="en-US"
-                    fluid
-                    class="sm:w-96 w-64"
-                />
-                <label for="price">Price</label>
-            </FloatLabel>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputText
+                        id="title"
+                        v-model="product.title"
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="title">Title</label>
+                </FloatLabel>
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <Textarea
+                        id="description"
+                        v-model="product.description"
+                        class="sm:w-96 w-64 h-32"
+                    />
+                    <label for="title">Description</label>
+                </FloatLabel>
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputText
+                        id="contents"
+                        v-model="product.contents"
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="contents">Contents</label>
+                </FloatLabel>
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputNumber
+                        id="price"
+                        v-model="product.price"
+                        inputId="currency-us"
+                        mode="currency"
+                        currency="USD"
+                        locale="en-US"
+                        fluid
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="price">Price</label>
+                </FloatLabel>
+            </div>
             <FloatLabel>
                 <InputNumber
                     id="oldPrice"
@@ -54,16 +77,22 @@
                 />
                 <label for="oldPrice">Old price</label>
             </FloatLabel>
-            <FloatLabel>
-                <InputNumber
-                    id="numInStock"
-                    v-model="product.number_in_stock"
-                    fluid
-                    class="sm:w-96 w-64"
-                />
-                <label for="numInStock">Number in stock</label>
-            </FloatLabel>
-            <div class="flex items-center">
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <FloatLabel>
+                    <InputNumber
+                        id="numInStock"
+                        v-model="product.number_in_stock"
+                        fluid
+                        class="sm:w-96 w-64"
+                    />
+                    <label for="numInStock">Number in stock</label>
+                </FloatLabel>
+            </div>
+            <div
+                class="flex items-center after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
                 <InputSwitch id="featured" v-model="product.featured" />
                 <label
                     for="featured"
@@ -73,15 +102,19 @@
                 </label>
             </div>
             <div class="flex flex-col gap-10">
-                <FileUpload
-                    mode="basic"
-                    customUpload
-                    :auto="true"
-                    @uploader="imageUploader"
-                    :multiple="true"
-                    accept="image/*"
-                    id="images"
-                />
+                <div
+                    class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+                >
+                    <FileUpload
+                        mode="basic"
+                        customUpload
+                        :auto="true"
+                        @uploader="imageUploader"
+                        :multiple="true"
+                        accept="image/*"
+                        id="images"
+                    />
+                </div>
                 <FadeTransition>
                     <div
                         v-if="imageURLs.length > 0"
@@ -105,123 +138,148 @@
                     </div>
                 </FadeTransition>
             </div>
-            <Dropdown
-                v-model="product.category"
-                :options="categories"
-                optionLabel="title"
-                :placeholder="
-                    categoriesLoading ? 'Loading...' : 'Select a category'
-                "
-                :loading="categoriesLoading"
-                @change="
-                    () => {
-                        product.subcategory = null;
-                        product.type = null;
-                        product.sizes = [];
-                        types = [];
-                        sizes = [];
-                        getSubcategoriesOfCategory(product.category.id);
-                        getSizesOfCategory(product.category.id);
-                        if (product.category != 3) {
-                            getSeasons();
-                        }
-                    }
-                "
-                class="sm:w-96 w-64"
-            />
-            <Dropdown
-                v-if="product.category"
-                v-model="product.subcategory"
-                :options="subcategories"
-                optionLabel="title"
-                :placeholder="
-                    subcategoriesLoading ? 'Loading...' : 'Select a subcategory'
-                "
-                :loading="subcategoriesLoading"
-                @change="getTypesOfSubcategory(product.subcategory.id)"
-                class="sm:w-96 w-64"
-            />
-            <Dropdown
-                v-if="product.subcategory"
-                v-model="product.type"
-                :options="types"
-                optionLabel="title"
-                filter
-                :placeholder="typesLoading ? 'Loading...' : 'Select a type'"
-                :loading="typesLoading"
-                class="sm:w-96 w-64"
-            />
-            <Dropdown
-                v-model="product.manufacturer"
-                :options="manufacturers"
-                optionLabel="name"
-                filter
-                :placeholder="
-                    manufacturersLoading
-                        ? 'Loading...'
-                        : 'Select a manufacturer'
-                "
-                :loading="manufacturersLoading"
-                class="sm:w-96 w-64"
-            />
-            <MultiSelect
-                v-if="product.category && product.category.id != 3"
-                v-model="product.sizes"
-                display="chip"
-                :options="sizes"
-                optionLabel="title"
-                :placeholder="sizesLoading ? 'Loading...' : 'Select sizes'"
-                :loading="sizesLoading"
-                :maxSelectedLabels="3"
-                class="sm:w-96 w-64"
-            />
-            <MultiSelect
-                v-model="product.colors"
-                :options="colors"
-                optionLabel="code"
-                :placeholder="colorsLoading ? 'Loading...' : 'Select colors'"
-                :loading="colorsLoading"
-                display="chip"
-                class="sm:w-96 w-64"
-                :pt="colorSelectPassThrough"
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
             >
-                <template #chip="slotProps">
-                    <div
-                        class="p-2 rounded-full"
-                        :style="`background-color: ${slotProps.value.code}`"
-                    ></div>
-                </template>
-                <template #option="slotProps">
-                    <div
-                        class="p-3 rounded"
-                        :style="`background-color: ${slotProps.option.code}`"
-                    ></div>
-                </template>
-            </MultiSelect>
-            <MultiSelect
-                v-model="product.materials"
-                display="chip"
-                filter
-                :options="materials"
-                optionLabel="title"
-                :placeholder="
-                    materialsLoading ? 'Loading...' : 'Select materials'
-                "
-                :loading="materialsLoading"
-                :maxSelectedLabels="3"
-                class="sm:w-96 w-64"
-            />
-            <MultiSelect
+                <Dropdown
+                    v-model="product.category"
+                    :options="categories"
+                    optionLabel="title"
+                    :placeholder="
+                        categoriesLoading ? 'Loading...' : 'Select a category'
+                    "
+                    :loading="categoriesLoading"
+                    @change="clearOnCategoryChange()"
+                    class="sm:w-96 w-64"
+                />
+            </div>
+            <div
+                v-if="product.category"
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <Dropdown
+                    v-model="product.subcategory"
+                    :options="subcategories"
+                    optionLabel="title"
+                    :placeholder="
+                        subcategoriesLoading
+                            ? 'Loading...'
+                            : 'Select a subcategory'
+                    "
+                    :loading="subcategoriesLoading"
+                    @change="getTypesOfSubcategory(product.subcategory.id)"
+                    class="sm:w-96 w-64"
+                />
+            </div>
+            <div
+                v-if="product.subcategory"
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <Dropdown
+                    v-model="product.type"
+                    :options="types"
+                    optionLabel="title"
+                    filter
+                    :placeholder="typesLoading ? 'Loading...' : 'Select a type'"
+                    :loading="typesLoading"
+                    class="sm:w-96 w-64"
+                />
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <Dropdown
+                    v-model="product.manufacturer"
+                    :options="manufacturers"
+                    optionLabel="name"
+                    filter
+                    :placeholder="
+                        manufacturersLoading
+                            ? 'Loading...'
+                            : 'Select a manufacturer'
+                    "
+                    :loading="manufacturersLoading"
+                    class="sm:w-96 w-64"
+                />
+            </div>
+            <div
                 v-if="product.category && product.category.id != 3"
-                v-model="product.seasons"
-                display="chip"
-                :options="seasons"
-                optionLabel="title"
-                :placeholder="seasonsLoading ? 'Loading...' : 'Select seasons'"
-                :loading="seasonsLoading"
-                :maxSelectedLabels="3"
-                class="sm:w-96 w-64"
-            />
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <MultiSelect
+                    v-model="product.sizes"
+                    display="chip"
+                    :options="sizes"
+                    optionLabel="title"
+                    :placeholder="sizesLoading ? 'Loading...' : 'Select sizes'"
+                    :loading="sizesLoading"
+                    :maxSelectedLabels="3"
+                    class="sm:w-96 w-64"
+                />
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <MultiSelect
+                    v-model="product.colors"
+                    :options="colors"
+                    optionLabel="code"
+                    :placeholder="
+                        colorsLoading ? 'Loading...' : 'Select colors'
+                    "
+                    :loading="colorsLoading"
+                    display="chip"
+                    class="sm:w-96 w-64"
+                    :pt="colorSelectPassThrough"
+                >
+                    <template #chip="slotProps">
+                        <div
+                            class="p-2 rounded-full"
+                            :style="`background-color: ${slotProps.value.code}`"
+                        ></div>
+                    </template>
+                    <template #option="slotProps">
+                        <div
+                            class="p-3 rounded"
+                            :style="`background-color: ${slotProps.option.code}`"
+                        ></div>
+                    </template>
+                </MultiSelect>
+            </div>
+            <div
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <MultiSelect
+                    v-model="product.materials"
+                    display="chip"
+                    filter
+                    :options="materials"
+                    optionLabel="title"
+                    :placeholder="
+                        materialsLoading ? 'Loading...' : 'Select materials'
+                    "
+                    :loading="materialsLoading"
+                    :maxSelectedLabels="3"
+                    class="sm:w-96 w-64"
+                />
+            </div>
+            <div
+                v-if="product.category && product.category.id != 3"
+                class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
+            >
+                <MultiSelect
+                    v-model="product.seasons"
+                    display="chip"
+                    :options="seasons"
+                    optionLabel="title"
+                    :placeholder="
+                        seasonsLoading ? 'Loading...' : 'Select seasons'
+                    "
+                    :loading="seasonsLoading"
+                    :maxSelectedLabels="3"
+                    class="sm:w-96 w-64"
+                />
+            </div>
             <Button
                 label="Add product"
                 class="w-fit"
@@ -384,7 +442,11 @@ function gatherDataAndCreateProduct() {
         } else if (typeof productWithoutImages[key] === "boolean") {
             productData.append(key, productWithoutImages[key] ? "1" : "0");
         } else {
-            productData.append(key, productWithoutImages[key]);
+            if (productWithoutImages[key] == null) {
+                productData.append(key, "");
+            } else {
+                productData.append(key, productWithoutImages[key]);
+            }
         }
     }
     for (var pair of productData.entries()) {
@@ -423,6 +485,21 @@ function persistProduct() {
     if (persist.value) {
         product.value.images = [];
         localStorage.setItem("createdProduct", JSON.stringify(product.value));
+    }
+}
+
+function clearOnCategoryChange() {
+    product.value.subcategory = null;
+    product.value.type = null;
+    product.value.sizes = [];
+    types.value = [];
+    sizes.value = [];
+    getSubcategoriesOfCategory(product.value.category.id);
+    getSizesOfCategory(product.value.category.id);
+    if (product.value.category.id != 3) {
+        getSeasons();
+    } else {
+        product.value.seasons = [];
     }
 }
 

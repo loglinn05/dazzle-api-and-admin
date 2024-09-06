@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
-import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
 
 export const useAuthStore = defineStore(
     "auth",
     () => {
-        const router = useRouter();
         const toast = useToast();
+        const router = useRouter();
 
         const currentUser = ref({
             name: "",
@@ -37,15 +37,7 @@ export const useAuthStore = defineStore(
                 })
                 .catch(function (error) {
                     if (error.response.data.errors) {
-                        for (let key in error.response.data.errors) {
-                            error.response.data.errors[key].forEach((error) => {
-                                toast.add({
-                                    severity: "error",
-                                    summary: error,
-                                    life: 5000,
-                                });
-                            });
-                        }
+                        displayValidationErrors(error.response.data.errors);
                     } else if (
                         error.response.status == 401 &&
                         error.response.data.message

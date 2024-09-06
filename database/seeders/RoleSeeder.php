@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 class RoleSeeder extends Seeder
 {
@@ -21,7 +21,6 @@ class RoleSeeder extends Seeder
             'create roles',
             'update roles',
             'delete roles',
-            'assign roles',
             'show users',
             'create users',
             'update users',
@@ -31,7 +30,6 @@ class RoleSeeder extends Seeder
             'update products and product features',
             'delete products and product features',
             'show orders',
-            'create orders',
             'update orders',
             'delete orders'
         ]);
@@ -45,7 +43,6 @@ class RoleSeeder extends Seeder
             'update products and product features',
             'delete products and product features',
             'show orders',
-            'create orders',
             'update orders',
             'delete orders'
         ]);

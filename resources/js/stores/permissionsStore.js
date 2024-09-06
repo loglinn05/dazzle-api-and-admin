@@ -2,10 +2,14 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { useHelpersStore } from "./helpersStore";
 
 export const usePermissionsStore = defineStore("permissions", () => {
-    const router = useRouter();
+    const helpersStore = useHelpersStore();
+    const { handleError } = helpersStore;
+
     const toast = useToast();
+    const router = useRouter();
 
     const permissions = ref([]);
     const permissionsLoading = ref(false);
@@ -45,19 +49,7 @@ export const usePermissionsStore = defineStore("permissions", () => {
                 router.push("/permissions");
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 
@@ -100,19 +92,7 @@ export const usePermissionsStore = defineStore("permissions", () => {
                 router.push(`/permission/${permissionId}`);
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 

@@ -17,27 +17,31 @@
                 style="font-size: 2rem"
             ></i>
             <div v-else class="grid gap-y-10">
-                <FloatLabel
-                    class="after:content-['*'] after:ml-0.5 after:text-red-500"
+                <div
+                    class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
                 >
-                    <InputText
-                        id="name"
-                        v-model="user.name"
-                        class="sm:w-96 w-64"
-                    />
-                    <label for="name">Name</label>
-                </FloatLabel>
-                <FloatLabel
-                    class="after:content-['*'] after:ml-0.5 after:mt-0 after:text-red-500"
+                    <FloatLabel>
+                        <InputText
+                            id="name"
+                            v-model="user.name"
+                            class="sm:w-96 w-64"
+                        />
+                        <label for="name">Name</label>
+                    </FloatLabel>
+                </div>
+                <div
+                    class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
                 >
-                    <InputText
-                        id="email"
-                        type="email"
-                        v-model="user.email"
-                        class="sm:w-96 w-64"
-                    />
-                    <label for="email">Email</label>
-                </FloatLabel>
+                    <FloatLabel>
+                        <InputText
+                            id="email"
+                            type="email"
+                            v-model="user.email"
+                            class="sm:w-96 w-64"
+                        />
+                        <label for="email">Email</label>
+                    </FloatLabel>
+                </div>
                 <FloatLabel>
                     <InputText
                         id="newPassword"
@@ -59,7 +63,7 @@
                     >
                 </FloatLabel>
                 <MultiSelect
-                    v-if="hasPermissions(['show roles', 'assign roles'])"
+                    v-if="hasPermissions(['show roles'])"
                     v-model="user.roles"
                     display="chip"
                     :options="roles"
@@ -111,8 +115,8 @@ onBeforeMount(() => {
 const user = ref({
     name: "",
     email: "",
-    new_password: null,
-    new_password_confirmation: null,
+    new_password: "",
+    new_password_confirmation: "",
     roles: [],
 });
 watch(
@@ -124,22 +128,14 @@ watch(
         if (currentUser.value.normalFormat.email) {
             user.value.email = currentUser.value.normalFormat.email;
         }
+        if (currentUser.value.normalFormat.roles?.length) {
+            user.value.roles = currentUser.value.normalFormat.roles;
+        }
     },
     { deep: true }
 );
 
-let userData = new FormData();
-
 function gatherDataAndEditUser() {
-    for (const key in user.value) {
-        if (!Array.isArray(user.value[key])) {
-            userData.append(key, user.value[key]);
-        } else {
-            for (let i = 0; i < user.value[key].length; i++) {
-                userData.append(`${key}[]`, user.value[key][i]);
-            }
-        }
-    }
-    editUser(route.params.id, userData);
+    editUser(route.params.id, JSON.stringify(user.value));
 }
 </script>

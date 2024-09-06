@@ -14,6 +14,7 @@
                     id="password"
                     type="password"
                     v-model="loginData.password"
+                    @keydown.enter="login(loginData)"
                 />
                 <label for="password">Password</label>
             </FloatLabel>

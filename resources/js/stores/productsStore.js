@@ -2,10 +2,14 @@ import { defineStore, storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { useHelpersStore } from "./helpersStore";
 
 export const useProductsStore = defineStore("products", () => {
-    const router = useRouter();
+    const helpersStore = useHelpersStore();
+    const { handleError } = helpersStore;
+
     const toast = useToast();
+    const router = useRouter();
 
     const products = ref([]);
     const persist = ref(true);
@@ -113,19 +117,7 @@ export const useProductsStore = defineStore("products", () => {
                 router.push(`/product/${productId}`);
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 

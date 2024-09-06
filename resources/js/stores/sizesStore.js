@@ -2,10 +2,13 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { useHelpersStore } from "./helpersStore";
 
 export const useSizesStore = defineStore("sizes", () => {
-    const router = useRouter();
+    const helpersStore = useHelpersStore();
+    const { handleError } = helpersStore;
     const toast = useToast();
+    const router = useRouter();
 
     const sizes = ref([]);
     const sizesLoading = ref(false);
@@ -61,19 +64,7 @@ export const useSizesStore = defineStore("sizes", () => {
                 router.push("/sizes");
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 
@@ -113,19 +104,7 @@ export const useSizesStore = defineStore("sizes", () => {
                 router.push(`/size/${sizeId}`);
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 

@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Validator;
 
 class UserController extends Controller
 {
@@ -15,25 +16,16 @@ class UserController extends Controller
         return UserResource::collection(User::all());
     }
 
-    public function assignRoles(Request $request, $id)
-    {
-        $fields = $request->validate([
-            'roles' => 'required|array',
-            'roles.*' => 'required|string',
-        ]);
-
-        User::find($id)->syncRoles($fields['roles']);
-    }
-
     public function create(Request $request)
     {
-        $fields = $request->validate([
+        $data = json_decode($request->userData, true);
+        $fields = Validator::make($data, [
             'name' => 'required|string',
             'email' => 'required|email:rfc|unique:users',
             'password' => 'required|string|min:8|max:255|confirmed',
             'roles' => 'nullable|array',
             'roles.*' => 'required|string'
-        ]);
+        ])->validate();
 
         $user = User::create([
             'name' => $fields['name'],
@@ -52,17 +44,21 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $fields = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'email:rfc',
                 Rule::unique('users')->ignore($id)
             ],
-            'new_password' => 'string|min:8|max:255|confirmed|nullable',
             'roles' => 'array|nullable',
             'roles.*' => 'string',
-        ]);
+        ];
+        if (isset($request->new_password) && $request->new_password) {
+            $rules['new_password'] = 'string|min:8|max:255|confirmed';
+        }
+        $data = json_decode($request->userData, true);
+        $fields = Validator::make($data, $rules)->validate();
 
         $user = User::find($id);
         $user->name = $fields['name'];
@@ -74,6 +70,7 @@ class UserController extends Controller
         if (isset($fields['roles'])) {
             $user->syncRoles($fields['roles']);
         }
+        return $fields;
     }
 
     public function updatePassword(Request $request, $id)

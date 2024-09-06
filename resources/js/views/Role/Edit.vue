@@ -22,9 +22,25 @@
                         id="name"
                         v-model="currentRole.normalFormat.name"
                         @keydown.enter="gatherDataAndEditRole"
+                        class="sm:w-96 w-64"
                     />
                     <label for="name">Name</label>
                 </FloatLabel>
+                <MultiSelect
+                    v-if="hasPermissions(['show permissions'])"
+                    v-model="currentRole.normalFormat.permissions"
+                    display="chip"
+                    :options="permissions"
+                    optionLabel="name"
+                    optionValue="name"
+                    :placeholder="
+                        permissionsLoading ? 'Loading...' : 'Select permissions'
+                    "
+                    :loading="permissionsLoading"
+                    filter
+                    :maxSelectedLabels="3"
+                    class="sm:w-96 w-64"
+                />
                 <Button
                     label="Edit role"
                     class="w-fit"
@@ -37,24 +53,31 @@
 
 <script setup>
 import { onBeforeMount, onBeforeUnmount } from "vue";
+import { useAuthStore } from "../../stores/authStore";
+import { usePermissionsStore } from "../../stores/permissionsStore";
 import { useRolesStore } from "../../stores/rolesStore";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
+import MultiSelect from "primevue/multiselect";
 
 const rolesStore = useRolesStore();
 const { currentRole, rolesLoading } = storeToRefs(rolesStore);
 const { getRole, editRole } = rolesStore;
 
+const { hasPermissions } = useAuthStore();
+
+const permissionsStore = usePermissionsStore();
+const { permissions, permissionsLoading } = storeToRefs(permissionsStore);
+const { getPermissions } = permissionsStore;
+
 const route = useRoute();
 
 onBeforeMount(() => {
     getRole(route.params.id);
+    getPermissions();
 });
 
-let roleData = new FormData();
-
 function gatherDataAndEditRole() {
-    roleData.append("name", currentRole.value.normalFormat.name);
-    editRole(route.params.id, roleData);
+    editRole(route.params.id, JSON.stringify(currentRole.value.normalFormat));
 }
 </script>

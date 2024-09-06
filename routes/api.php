@@ -10,6 +10,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RevenueController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SeasonController;
 use App\Http\Controllers\SizeController;
@@ -67,10 +68,23 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             ->middleware('permission:create users');
         Route::get('/{id}', [UserController::class, 'show'])
             ->middleware('permission:show users');
-        Route::post('/{id}/update', [UserController::class, 'update']);
+        Route::post('/{id}/update', [UserController::class, 'update'])->middleware('permission:update users');
         Route::post('/{id}/delete', [UserController::class, 'delete'])
             ->middleware('permission:delete users');
         Route::post('/{id}/update-password', [UserController::class, 'updatePassword']);
+    });
+
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->middleware('permission:show orders');
+    Route::get('/orders/recent', [OrderController::class, 'getRecentOrders'])
+        ->middleware('permission:show orders');
+    Route::prefix('/order')->group(function () {
+        Route::get('/{id}', [OrderController::class, 'show'])
+            ->middleware('permission:show orders');
+        Route::post('/{id}/update', [OrderController::class, 'update'])
+            ->middleware('permission:update orders');
+        Route::post('/{id}/delete', [OrderController::class, 'delete'])
+            ->middleware('permission:delete orders');
     });
 
     Route::group(['middleware' => ['permission:show products and product features']], function () {
@@ -140,4 +154,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/material/{id}/delete', [MaterialController::class, 'delete']);
         Route::post('/season/{id}/delete', [SeasonController::class, 'delete']);
     });
+
+    Route::get('/monthly-revenue', [RevenueController::class, 'getMonthlyRevenue'])
+        ->middleware('permission:show orders');
+    Route::get('/revenue-by-categories', [RevenueController::class, 'getRevenueByCategories'])
+        ->middleware('permission:show orders');
 });

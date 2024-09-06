@@ -2,10 +2,14 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { useHelpersStore } from "./helpersStore";
 
 export const useRolesStore = defineStore("roles", () => {
-    const router = useRouter();
+    const helpersStore = useHelpersStore();
+    const { handleError } = helpersStore;
+
     const toast = useToast();
+    const router = useRouter();
 
     const roles = ref([]);
     const rolesLoading = ref(false);
@@ -37,24 +41,14 @@ export const useRolesStore = defineStore("roles", () => {
             life: 3000,
         });
         axios
-            .post(`${import.meta.env.VITE_API_BASE_URL}/role/create`, roleData)
+            .post(`${import.meta.env.VITE_API_BASE_URL}/role/create`, {
+                roleData: roleData,
+            })
             .then(() => {
                 router.push("/roles");
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 
@@ -89,25 +83,13 @@ export const useRolesStore = defineStore("roles", () => {
         axios
             .post(
                 `${import.meta.env.VITE_API_BASE_URL}/role/${roleId}/update`,
-                roleData
+                { roleData: roleData }
             )
             .then(() => {
                 router.push(`/role/${roleId}`);
             })
             .catch((error) => {
-                if (error.response.data.errors) {
-                    for (let key in error.response.data.errors) {
-                        error.response.data.errors[key].forEach((error) => {
-                            toast.add({
-                                severity: "error",
-                                summary: error,
-                                life: 5000,
-                            });
-                        });
-                    }
-                } else {
-                    console.error(error);
-                }
+                handleError(error);
             });
     }
 

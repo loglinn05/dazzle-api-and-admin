@@ -93,11 +93,15 @@
                         {{ data.value.title ?? data.value.name }}
                     </span>
                     <span v-else>
-                        {{
-                            data.key == "price" || data.key == "old_price"
-                                ? formatCurrency(data.value)
-                                : data.value
-                        }}
+                        <template v-if="data.key == 'price'">
+                            {{ formatCurrency(data.value) }}
+                        </template>
+                        <template v-else-if="data.key == 'old_price'">
+                            {{ data.value ? formatCurrency(data.value) : "—" }}
+                        </template>
+                        <template v-else>
+                            {{ data.value }}
+                        </template>
                     </span>
                 </template>
             </Column>
@@ -112,8 +116,11 @@ import { useProductsStore } from "../../stores/productsStore";
 import { onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import Image from "primevue/image";
-import { toSentenceCase, formatCurrency, isObject } from "../../helpers";
+import { useHelpersStore } from "../../stores/helpersStore";
 import { useConfirm } from "primevue/useconfirm";
+
+const helpersStore = useHelpersStore();
+const { toSentenceCase, formatCurrency, isObject } = helpersStore;
 
 const { hasPermissions } = useAuthStore();
 

@@ -514,6 +514,35 @@ const routes = [
                     },
                 ],
             },
+            {
+                path: "/orders",
+                name: "all orders",
+                meta: {
+                    permissions: ["show orders"],
+                },
+                component: () => import("./views/Order/Index.vue"),
+            },
+            {
+                path: "/order",
+                children: [
+                    {
+                        path: ":id",
+                        name: "show order",
+                        meta: {
+                            permissions: ["show orders"],
+                        },
+                        component: () => import("./views/Order/Show.vue"),
+                    },
+                    {
+                        path: ":id/edit",
+                        name: "edit order",
+                        meta: {
+                            permissions: ["update orders"],
+                        },
+                        component: () => import("./views/Order/Edit.vue"),
+                    },
+                ],
+            },
         ],
     },
     {

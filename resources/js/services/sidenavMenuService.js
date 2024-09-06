@@ -11,14 +11,14 @@ export const SidenavMenuService = {
                 data: "Manage products",
                 icon: "pi pi-fw pi-shopping-bag",
                 route: "/products",
-                visible: true,
+                visible: hasPermissions(["show products and product features"]),
             },
             {
                 key: "1",
                 label: "Product features",
                 data: "Manage product features",
                 icon: "pi pi-fw pi-tags",
-                visible: true,
+                visible: hasPermissions(["show products and product features"]),
                 children: [
                     {
                         key: "1-0",
@@ -83,7 +83,8 @@ export const SidenavMenuService = {
                 label: "Orders",
                 data: "Manage orders",
                 icon: "pi pi-fw pi-truck",
-                visible: true,
+                route: "/orders",
+                visible: hasPermissions(["show orders"]),
             },
             {
                 key: "3",
@@ -91,7 +92,7 @@ export const SidenavMenuService = {
                 data: "Manage users",
                 icon: "pi pi-fw pi-user",
                 route: "/users",
-                visible: true,
+                visible: hasPermissions(["show users"]),
             },
             {
                 key: "4",

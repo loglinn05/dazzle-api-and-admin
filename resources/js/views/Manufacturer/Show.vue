@@ -68,8 +68,11 @@ import { useAuthStore } from "../../stores/authStore";
 import { useManufacturersStore } from "../../stores/manufacturersStore";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
-import { toSentenceCase } from "../../helpers";
+import { useHelpersStore } from "../../stores/helpersStore";
 import { useConfirm } from "primevue/useconfirm";
+
+const helpersStore = useHelpersStore();
+const { toSentenceCase } = helpersStore;
 
 const { hasPermissions } = useAuthStore();
 

@@ -14,11 +14,27 @@
             <FloatLabel>
                 <InputText
                     id="name"
-                    v-model="name"
+                    v-model="role.name"
                     @keydown.enter="gatherDataAndCreateRole"
+                    class="sm:w-96 w-64"
                 />
                 <label for="name">Name</label>
             </FloatLabel>
+            <MultiSelect
+                v-if="hasPermissions(['show permissions'])"
+                v-model="role.permissions"
+                display="chip"
+                :options="permissions"
+                optionLabel="name"
+                optionValue="name"
+                :placeholder="
+                    permissionsLoading ? 'Loading...' : 'Select permissions'
+                "
+                :loading="permissionsLoading"
+                filter
+                :maxSelectedLabels="3"
+                class="sm:w-96 w-64"
+            />
             <Button
                 label="Add role"
                 class="w-fit"
@@ -29,18 +45,32 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
+import { useAuthStore } from "../../stores/authStore";
 import { useRolesStore } from "../../stores/rolesStore";
+import { usePermissionsStore } from "../../stores/permissionsStore";
+import { storeToRefs } from "pinia";
+import MultiSelect from "primevue/multiselect";
 
-let roleData = new FormData();
-
-const name = ref("");
+const role = ref({
+    name: "",
+    permissions: [],
+});
 
 function gatherDataAndCreateRole() {
-    roleData.append("name", name.value);
-    createRole(roleData);
+    createRole(JSON.stringify(role.value));
 }
 
 const rolesStore = useRolesStore();
 const { createRole } = rolesStore;
+
+const { hasPermissions } = useAuthStore();
+
+const permissionsStore = usePermissionsStore();
+const { permissions, permissionsLoading } = storeToRefs(permissionsStore);
+const { getPermissions } = permissionsStore;
+
+onBeforeMount(() => {
+    getPermissions();
+});
 </script>

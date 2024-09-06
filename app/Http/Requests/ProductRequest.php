@@ -27,7 +27,7 @@ class ProductRequest extends FormRequest
             "description" => "required|string",
             "contents" => "required|string",
             "price" => "required|numeric",
-            "old_price" => "required|numeric",
+            "old_price" => "numeric|nullable",
             "number_in_stock" => "required|integer",
             "featured" => "required|boolean",
             "images" => "required|array|max:10",

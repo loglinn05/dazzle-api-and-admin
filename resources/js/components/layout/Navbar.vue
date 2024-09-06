@@ -18,22 +18,6 @@
         </template>
         <template #end>
             <div class="flex items-center gap-x-10">
-                <a href="#" class="relative text-slate-500 p-0">
-                    <SlideTopTransition>
-                        <span
-                            key="notification-link-icon"
-                            class="pi pi-bell !text-base sm:!text-lg p-0"
-                        />
-                        <Badge
-                            key="notification-link-badge"
-                            class="absolute top-0 right-0 -me-2 -mt-1 flex justify-center items-center ml-0.5 min-w-4 h-4 text-xs px-1"
-                        >
-                            <FadeTransition>
-                                <span key="3">3</span>
-                            </FadeTransition>
-                        </Badge>
-                    </SlideTopTransition>
-                </a>
                 <p class="sm:text-lg text-base font-text text-violet-700">
                     Hi, {{ currentUser.name }}!
                 </p>

@@ -61,7 +61,11 @@
             </Column>
             <Column header="Old price">
                 <template #body="slotProps">
-                    {{ formatCurrency(slotProps.data.old_price) }}
+                    {{
+                        slotProps.data.old_price
+                            ? formatCurrency(slotProps.data.old_price)
+                            : "—"
+                    }}
                 </template>
             </Column>
             <Column header="Category">
@@ -98,7 +102,10 @@ import { useAuthStore } from "../../stores/authStore";
 import { useProductsStore } from "../../stores/productsStore";
 import { storeToRefs } from "pinia";
 import Tag from "primevue/tag";
-import { formatCurrency } from "../../helpers";
+import { useHelpersStore } from "../../stores/helpersStore";
+
+const helpersStore = useHelpersStore();
+const { formatCurrency } = helpersStore;
 
 const { hasPermissions } = useAuthStore();
 
