@@ -73,13 +73,7 @@ orders, and users efficiently.
     - 🛡️ Role: Customer
     - 🔐 Can't access the admin panel.
 
-<details>
-
-<summary>
-    <span style="font-size: 1.4rem; margin-left:0.25rem; font-weight: bold;">
-        Launch Guide
-    </span>
-</summary>
+## Launch Guide
 
 ### Prerequisites
 
@@ -125,4 +119,3 @@ npm run dev
 ```
 
 The admin panel will be available at [http://localhost:8000](http://localhost:8000).
-</details>
