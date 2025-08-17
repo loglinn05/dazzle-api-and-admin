@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Resources\ClientOrderResource;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Validator;
 
 class OrderController extends Controller
 {
@@ -21,6 +21,7 @@ class OrderController extends Controller
             'name' => 'required|string',
             'email' => 'required|email:rfc',
             'shippingAddress' => 'required|string',
+            'userId' => 'nullable|integer',
             'productIds' => 'required|array',
             'productIds.*' => 'required',
             'productIds.*.id' => 'required|integer',
@@ -35,6 +36,7 @@ class OrderController extends Controller
             'shipping_address' => $fields['shippingAddress'],
             'total' => $fields['total'] / 100,
             'status' => 'pending',
+            'user_id' => $fields['userId'] ?? null
         ]);
 
         foreach ($fields['productIds'] as $productId) {
@@ -61,6 +63,11 @@ class OrderController extends Controller
                 'total' => $order->total
             ], 200);
         }
+    }
+
+    public function getUsersOrders(Request $request)
+    {
+        return ClientOrderResource::collection(Order::where('user_id', $request->user()->id)->get());
     }
 
     public function index()

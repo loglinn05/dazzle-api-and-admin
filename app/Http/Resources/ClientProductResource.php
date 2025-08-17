@@ -17,24 +17,6 @@ class ClientProductResource extends JsonResource
         return $result;
     }
 
-    private function flattenSizes()
-    {
-        $result = [];
-        foreach ($this->sizes as $size) {
-            $result[] = $size->title;
-        }
-        return $result;
-    }
-
-    private function flattenColors()
-    {
-        $result = [];
-        foreach ($this->colors as $color) {
-            $result[] = $color->code;
-        }
-        return $result;
-    }
-
     private function flattenMaterials()
     {
         $result = [];
@@ -63,7 +45,6 @@ class ClientProductResource extends JsonResource
         return [
             'id' => $this->id,
             'hit' => $this->orders->count() > 10000,
-            'new' => $this->created_at < now()->subMonths(6),
             'featured' => $this->featured ? true : false,
             'images' => $this->flattenImages(),
             'title' => $this->title,
@@ -76,8 +57,8 @@ class ClientProductResource extends JsonResource
             'subcategory' => $this->subcategory->title,
             'type' => $this->type->title,
             'manufacturer' => $this->manufacturer->name,
-            'sizes' => $this->flattenSizes(),
-            'colors' => $this->flattenColors(),
+            'sizes' => $this->sizes,
+            'colors' => $this->colors,
             'materials' => $this->flattenMaterials(),
             'seasons' => $this->flattenSeasons(),
         ];

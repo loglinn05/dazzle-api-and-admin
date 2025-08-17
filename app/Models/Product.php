@@ -70,33 +70,33 @@ class Product extends Model
     function scopeWithFilters(Builder $query)
     {
         $filterValues = request()->input('filterValues');
-        return $query->when(count($filterValues['types']), function ($query) use ($filterValues) {
+        return $query->when(isset($filterValues['types']) && count($filterValues['types']), function ($query) use ($filterValues) {
             $query->whereIn('type_id', $filterValues['types']);
         })
-            ->when(count($filterValues['sizes']), function ($query) use ($filterValues) {
+            ->when(isset($filterValues['sizes']) && count($filterValues['sizes']), function ($query) use ($filterValues) {
                 $query->whereHas('sizes', function (Builder $query) use ($filterValues) {
                     $query->whereIn('product_size.size_id', $filterValues['sizes']);
                 });
             })
-            ->when(count($filterValues['colors']), function ($query) use ($filterValues) {
+            ->when(isset($filterValues['colors']) && count($filterValues['colors']), function ($query) use ($filterValues) {
                 $query->whereHas('colors', function (Builder $query) use ($filterValues) {
                     $query->whereIn('color_product.color_id', $filterValues['colors']);
                 });
             })
-            ->when(count($filterValues['materials']), function ($query) use ($filterValues) {
+            ->when(isset($filterValues['materials']) && count($filterValues['materials']), function ($query) use ($filterValues) {
                 $query->whereHas('materials', function (Builder $query) use ($filterValues) {
                     $query->whereIn('material_product.material_id', $filterValues['materials']);
                 });
             })
-            ->when(count($filterValues['seasons']), function ($query) use ($filterValues) {
+            ->when(isset($filterValues['seasons']) && count($filterValues['seasons']), function ($query) use ($filterValues) {
                 $query->whereHas('seasons', function (Builder $query) use ($filterValues) {
                     $query->whereIn('product_season.season_id', $filterValues['seasons']);
                 });
             })
-            ->when(count($filterValues['price']), function ($query) use ($filterValues) {
+            ->when(isset($filterValues['price']) && count($filterValues['price']), function ($query) use ($filterValues) {
                 $query->whereBetween('price', $filterValues['price']);
             })
-            ->when(count($filterValues['manufacturers']), function ($query) use ($filterValues) {
+            ->when(isset($filterValues['manufacturers']) && count($filterValues['manufacturers']), function ($query) use ($filterValues) {
                 $query->whereIn('manufacturer_id', $filterValues['manufacturers']);
             });
     }

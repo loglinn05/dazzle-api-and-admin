@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -21,8 +20,10 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
-            'password' => bcrypt($fields['password']),
+            'password' => Hash::make($fields['password']),
         ]);
+
+        $user->syncRoles(['customer']);
 
         $token = $user->createToken('dazzle')->plainTextToken;
 
@@ -51,16 +52,23 @@ class AuthController extends Controller
 
         $token = $user->createToken('dazzle')->plainTextToken;
 
-        $response = [
-            'user' => new UserResource($user),
-            'token' => $token
-        ];
+        if ($request->from_customer)
+            $response = [
+                'user' => $user,
+                'token' => $token
+            ];
+        else
+            $response = [
+                'user' => new UserResource($user),
+                'token' => $token
+            ];
 
-        return response($response, 201);
+        return response($response);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        auth('sanctum')->user()->tokens()->delete();
+        $request->user()->tokens()->delete();
+        return response()->noContent();
     }
 }

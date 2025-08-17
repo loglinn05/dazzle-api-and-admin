@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\AdminProductResource;
 use App\Http\Resources\ClientProductResource;
@@ -12,8 +11,9 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Subcategory;
 use App\Models\Type;
-use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -22,12 +22,27 @@ class ProductController extends Controller
         return AdminProductResource::collection(Product::all());
     }
 
-    public function getProducts(Request $request)
+    public function getProducts(Request $request, $subcategory_id = null)
     {
-        if (is_integer((int) $request->subcategory_id)) {
-            return ClientProductResource::collection(Product::where('subcategory_id', $request->subcategory_id)->get());
+        if ($subcategory_id != null && is_integer((int)$subcategory_id)) {
+            return ClientProductResource::collection(Product::where('subcategory_id', $subcategory_id)->withFilters()->get());
         } else {
+            if (is_bool($request->new) && $request->new) {
+                return ClientProductResource::collection(Product::where('created_at', '>=', Carbon::now()->subMonth())->orderByDesc('created_at')->limit(8)->get());
+            }
+            if (is_bool($request->featured) && $request->featured) {
+                return ClientProductResource::collection(Product::where('featured', true)->orderByDesc('created_at')->limit(8)->get());
+            }
             return ClientProductResource::collection(Product::where('subcategory_id', 2)->get());
+        }
+    }
+
+    public function getProduct(Request $request)
+    {
+        if (is_integer((int)$request->product_id)) {
+            return new ClientProductResource(Product::find($request->product_id));
+        } else {
+            abort(400, 'Invalid product ID');
         }
     }
 

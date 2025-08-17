@@ -20,7 +20,8 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/get-products', [ProductController::class, 'getProducts']);
+Route::post('/get-products/{subcategory_id?}', [ProductController::class, 'getProducts']);
+Route::get('/get-product/{product_id}', [ProductController::class, 'getProduct']);
 Route::post('/get-filter-list/{subcategory_id}', [FilterController::class, 'getFilterList']);
 Route::get('/get-menu', MenuController::class);
 Route::post('/register', [AuthController::class, 'register']);
@@ -31,7 +32,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::put('/update-profile', [UserController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/get-orders', [OrderController::class, 'getUsersOrders']);
 
     Route::get('/permissions', [PermissionController::class, 'index'])
         ->middleware('permission:show permissions');
