@@ -1,8 +1,8 @@
-# Clothes Shop Admin Panel
+# [Dazzle](https://github.com/loglinn05/dazzle) Admin Panel
 
 ## Overview
 
-This is the admin panel for Dazzle, a clothing store. It allows administrators to manage products, product attributes,
+This is the admin panel for [**Dazzle**](https://github.com/loglinn05/dazzle), a clothing store. It allows administrators to manage products, product attributes,
 orders, and users efficiently.
 
 ## Features
