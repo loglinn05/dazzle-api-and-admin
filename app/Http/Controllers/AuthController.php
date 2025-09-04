@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         $user->syncRoles(['customer']);
 
-        $token = $user->createToken('dazzle')->plainTextToken;
+        $token = $user->createToken('dazzle_user_' . $fields['email'])->plainTextToken;
 
         $response = [
             'user' => $user,
@@ -50,7 +50,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('dazzle')->plainTextToken;
+        $token = $user->createToken('dazzle_user_' . $fields['email'])->plainTextToken;
 
         if ($request->from_customer)
             $response = [

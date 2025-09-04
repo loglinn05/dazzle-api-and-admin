@@ -1,0 +1,12 @@
+public/storage
+public/hot
+vendor
+node_modules
+package-lock.json
+.git
+.gitignore
+.editorconfig
+phpunit.xml
+storage/framework/cache/**
+storage/framework/sessions/**
+storage/framework/views/**
