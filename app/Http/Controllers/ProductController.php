@@ -46,9 +46,8 @@ class ProductController extends Controller
         }
     }
 
-    public function create(ProductRequest $request)
+    private function buildAndSaveProduct(Product $product, Request $request)
     {
-        $product = new Product();
         $product->title = $request->title;
         $product->description = $request->description;
         $product->contents = $request->contents;
@@ -79,11 +78,19 @@ class ProductController extends Controller
         foreach ($request->file("images") as $image) {
             $productImage = new ProductImage();
             $fileName = time() . '_' . $image->getClientOriginalName();
-            $filePath = Storage::disk('public')->putFileAs('product_images', $image, $fileName);
+            // $filePath = Storage::disk('public')->putFileAs('product_images', $image, $fileName);
+            $filePath = Storage::putFileAs("product_images", $image, $fileName);
             $productImage->file_name = $fileName;
             $productImage->file_path = $filePath;
             $product->images()->save($productImage);
         }
+    }
+
+    public function create(ProductRequest $request)
+    {
+        $product = new Product();
+
+        $this->buildAndSaveProduct($product, $request);
     }
 
     public function show($id)
@@ -94,54 +101,22 @@ class ProductController extends Controller
     public function update(ProductRequest $request, $id)
     {
         $product = Product::find($id);
-        $product->title = $request->title;
-        $product->description = $request->description;
-        $product->contents = $request->contents;
-        $product->price = $request->price;
-        $product->old_price = $request->old_price;
-        $product->num_in_stock = $request->number_in_stock;
-        $product->featured = $request->featured;
-
-        $category = Category::find($request->category);
-        $product->category()->associate($category);
-
-        $subcategory = Subcategory::find($request->subcategory);
-        $product->subcategory()->associate($subcategory);
-
-        $type = Type::find($request->type);
-        $product->type()->associate($type);
-
-        $manufacturer = Manufacturer::find($request->manufacturer);
-        $product->manufacturer()->associate($manufacturer);
-
-        $product->save();
 
         $product->sizes()->detach();
-        $product->sizes()->attach($request->sizes);
 
         $product->colors()->detach();
-        $product->colors()->attach($request->colors);
 
         $product->materials()->detach();
-        $product->materials()->attach($request->materials);
 
         $product->seasons()->detach();
-        $product->seasons()->attach($request->seasons);
 
         foreach ($product->images as $image) {
-            Storage::disk('public')->delete($image->file_path);
+            Storage::delete($image->file_path);
         }
 
         $product->images()->delete();
 
-        foreach ($request->file("images") as $image) {
-            $productImage = new ProductImage();
-            $fileName = time() . '_' . $image->getClientOriginalName();
-            $filePath = Storage::disk('public')->putFileAs('product_images', $image, $fileName);
-            $productImage->file_name = $fileName;
-            $productImage->file_path = $filePath;
-            $product->images()->save($productImage);
-        }
+        $this->buildAndSaveProduct($product, $request);
     }
 
     public function delete($id)

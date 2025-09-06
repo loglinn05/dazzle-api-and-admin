@@ -12,7 +12,8 @@ class ClientProductResource extends JsonResource
     {
         $result = [];
         foreach ($this->images as $image) {
-            $result[] = env("APP_URL") . Storage::url($image->file_path);
+            // $result[] = env("APP_URL") . Storage::url($image->file_path);
+            $result[] = Storage::temporaryUrl($image->file_path, now()->addMinutes(5));
         }
         return $result;
     }

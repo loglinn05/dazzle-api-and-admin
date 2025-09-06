@@ -1,3 +1,7 @@
+.PHONY: cb
+cb:
+	docker compose build
+
 .PHONY: cub
 cub:
 	docker compose up --build

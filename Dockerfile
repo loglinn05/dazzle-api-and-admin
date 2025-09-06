@@ -10,11 +10,12 @@ COPY ./ /app
 
 # Install Composer and NPM dependencies, mount cache
 RUN --mount=type=cache,target=/app/.npm npm set cache /app/.npm && npm install && npm run build && \
-    composer install --no-progress --no-dev --prefer-dist --no-cache
+    composer install --no-progress --no-dev --prefer-dist --no-cache && \
+    mkdir -p /app/logs && touch /app/logs/access.log /app/logs/error.log && chown -R 1000:1000 /app/logs
+
 
 # 2. Building the API
-
-FROM php:8.4-fpm-alpine AS api-and-admin
+FROM php:8.4-fpm-alpine AS api
 
 WORKDIR /app
 
@@ -42,14 +43,15 @@ COPY --from=builder /app/run-app.sh /app/run-app.sh
 
 COPY --from=builder /app/artisan /app/artisan
 
+COPY --from=builder /app/php-fpm.conf /app/php-fpm.conf
+
 COPY --from=builder /app/composer.json /app/composer.json
 COPY --from=builder /app/composer.lock /app/composer.lock
 
 RUN mkdir -p /app/storage/framework/cache \
     /app/storage/framework/sessions \
     /app/storage/framework/views \
-    /app/storage/logs \
-    /app/storage/app/public && \
+    /app/storage/logs && \
     chmod +x /app/run-app.sh && chown -R 1000:1000 /app
 
 USER 1000
@@ -60,6 +62,12 @@ CMD ["/app/run-app.sh"]
 
 # 3. Building the facade
 
-FROM cgr.dev/chainguard/nginx AS web
+FROM cgr.dev/chainguard/nginx AS admin
+
+USER root
 
 COPY --from=builder /app/public /app
+COPY --from=builder /app/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/logs app/logs
+
+USER 1000

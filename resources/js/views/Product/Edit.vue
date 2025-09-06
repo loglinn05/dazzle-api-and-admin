@@ -100,7 +100,7 @@
                     class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
                 >
                     <div class="flex items-center">
-                        <InputSwitch id="featured" v-model="product.featured" />
+                        <InputSwitch id="featured" v-model="product.featured"/>
                         <label
                             for="numInStock"
                             class="ms-2 sm:text-lg text-base font-text text-violet-700"
@@ -305,28 +305,28 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, watch, onBeforeUnmount } from "vue";
-import { useRoute } from "vue-router";
+import {onBeforeMount, onBeforeUnmount, ref, watch} from "vue";
+import {useRoute} from "vue-router";
 import InputSwitch from "primevue/inputswitch";
 import FileUpload from "primevue/fileupload";
 import MultiSelect from "primevue/multiselect";
 import InputNumber from "primevue/inputnumber";
 import Textarea from "primevue/textarea";
-import { useProductsStore } from "../../stores/productsStore";
-import { useCategoriesStore } from "../../stores/categoriesStore";
-import { useSubcategoriesStore } from "../../stores/subcategoriesStore";
-import { useTypesStore } from "../../stores/typesStore.js";
-import { useManufacturersStore } from "../../stores/manufacturersStore.js";
-import { useSizesStore } from "../../stores/sizesStore.js";
-import { useColorsStore } from "../../stores/colorsStore.js";
-import { useMaterialsStore } from "../../stores/materialsStore.js";
-import { useSeasonsStore } from "../../stores/seasonsStore.js";
-import { storeToRefs } from "pinia";
-import { useToast } from "primevue/usetoast";
-import { useHelpersStore } from "../../stores/helpersStore";
+import {useProductsStore} from "../../stores/productsStore";
+import {useCategoriesStore} from "../../stores/categoriesStore";
+import {useSubcategoriesStore} from "../../stores/subcategoriesStore";
+import {useTypesStore} from "../../stores/typesStore.js";
+import {useManufacturersStore} from "../../stores/manufacturersStore.js";
+import {useSizesStore} from "../../stores/sizesStore.js";
+import {useColorsStore} from "../../stores/colorsStore.js";
+import {useMaterialsStore} from "../../stores/materialsStore.js";
+import {useSeasonsStore} from "../../stores/seasonsStore.js";
+import {storeToRefs} from "pinia";
+import {useToast} from "primevue/usetoast";
+import {useHelpersStore} from "../../stores/helpersStore";
 
 const helpersStore = useHelpersStore();
-const { isObject, isBoolean, getFileExtension } = helpersStore;
+const {isObject, isBoolean, getFileExtension} = helpersStore;
 
 const route = useRoute();
 
@@ -377,40 +377,40 @@ const product = ref({
 });
 
 const productsStore = useProductsStore();
-const { currentProduct, productsLoading } = storeToRefs(productsStore);
-const { getProduct, editProduct } = productsStore;
+const {currentProduct, productsLoading} = storeToRefs(productsStore);
+const {getProduct, editProduct} = productsStore;
 
 const categoriesStore = useCategoriesStore();
-const { categories, categoriesLoading } = storeToRefs(categoriesStore);
-const { getCategories } = categoriesStore;
+const {categories, categoriesLoading} = storeToRefs(categoriesStore);
+const {getCategories} = categoriesStore;
 
 const subcategoriesStore = useSubcategoriesStore();
-const { subcategories, subcategoriesLoading } = storeToRefs(subcategoriesStore);
-const { getSubcategoriesOfCategory } = subcategoriesStore;
+const {subcategories, subcategoriesLoading} = storeToRefs(subcategoriesStore);
+const {getSubcategoriesOfCategory} = subcategoriesStore;
 
 const typesStore = useTypesStore();
-const { types, typesLoading } = storeToRefs(typesStore);
-const { getTypesOfSubcategory } = typesStore;
+const {types, typesLoading} = storeToRefs(typesStore);
+const {getTypesOfSubcategory} = typesStore;
 
 const manufacturersStore = useManufacturersStore();
-const { manufacturers, manufacturersLoading } = storeToRefs(manufacturersStore);
-const { getManufacturers } = manufacturersStore;
+const {manufacturers, manufacturersLoading} = storeToRefs(manufacturersStore);
+const {getManufacturers} = manufacturersStore;
 
 const sizesStore = useSizesStore();
-const { sizes, sizesLoading } = storeToRefs(sizesStore);
-const { getSizesOfCategory } = sizesStore;
+const {sizes, sizesLoading} = storeToRefs(sizesStore);
+const {getSizesOfCategory} = sizesStore;
 
 const colorsStore = useColorsStore();
-const { colors, colorsLoading } = storeToRefs(colorsStore);
-const { getColors } = colorsStore;
+const {colors, colorsLoading} = storeToRefs(colorsStore);
+const {getColors} = colorsStore;
 
 const materialsStore = useMaterialsStore();
-const { materials, materialsLoading } = storeToRefs(materialsStore);
-const { getMaterials } = materialsStore;
+const {materials, materialsLoading} = storeToRefs(materialsStore);
+const {getMaterials} = materialsStore;
 
 const seasonsStore = useSeasonsStore();
-const { seasons, seasonsLoading } = storeToRefs(seasonsStore);
-const { getSeasons } = seasonsStore;
+const {seasons, seasonsLoading} = storeToRefs(seasonsStore);
+const {getSeasons} = seasonsStore;
 
 const imageURLs = ref([]);
 
@@ -450,7 +450,7 @@ function gatherDataAndEditProduct() {
     for (let image of product.value.images) {
         productData.append("images[]", image.file);
     }
-    let productWithoutImages = (({ images, ...rest }) => rest)(product.value);
+    let productWithoutImages = (({images, ...rest}) => rest)(product.value);
     for (const key in productWithoutImages) {
         if (Array.isArray(productWithoutImages[key])) {
             productWithoutImages[key].forEach((el) => {
@@ -470,9 +470,6 @@ function gatherDataAndEditProduct() {
                 productData.append(key, productWithoutImages[key]);
             }
         }
-    }
-    for (var pair of productData.entries()) {
-        console.log(pair[0] + ", " + pair[1]);
     }
     editProduct(productData, route.params.id);
     productData = new FormData();
@@ -504,7 +501,7 @@ const productUnwatch = watch(
         }
         productUnwatch();
     },
-    { deep: true }
+    {deep: true}
 );
 
 const currentProductUnwatch = watch(
@@ -538,7 +535,7 @@ const currentProductUnwatch = watch(
             currentProductUnwatch();
         }
     },
-    { deep: true }
+    {deep: true}
 );
 
 function persistProduct() {

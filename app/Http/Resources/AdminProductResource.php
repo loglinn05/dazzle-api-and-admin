@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-
 use Illuminate\Support\Facades\Storage;
 
 class AdminProductResource extends JsonResource
@@ -14,7 +13,8 @@ class AdminProductResource extends JsonResource
     {
         $result = [];
         foreach ($this->images as $image) {
-            $image->file_path = Storage::url($image->file_path);
+            // $image->file_path = Storage::url($image->file_path);
+            $image->file_path = Storage::temporaryUrl($image->file_path, now()->addMinutes(5));
             $result[] = $image;
         }
         return $result;

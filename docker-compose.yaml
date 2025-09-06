@@ -1,70 +1,71 @@
 services:
-  api-and-admin:
-    container_name: dazzle-api-and-admin
-    image: dazzle-api-and-admin
+  api:
+    container_name: dazzle-api
+    image: dazzle-api
     build:
       context: .
-      target: api-and-admin
+      target: api
     restart: unless-stopped
     working_dir: /app
     # Only needed on a local machine
     # env_file:
     #   - ./.env
-    volumes:
-      - ./php-fpm.conf:/opt/bitnami/php/etc/php-fpm.d/www.conf
-      - storage-data:/app/storage/app/public
+    # volumes:
+    #   - storage-data:/app/storage/app/public
     user: "1000"
-    depends_on:
-      db:
-        condition: service_healthy
+    # Only needed on a local machine
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
     networks:
       - frontend
       - backend
 
-  web:
-    container_name: dazzle-web
-    image: dazzle-web
+  admin:
+    container_name: dazzle-admin
+    image: dazzle-admin
     build:
       context: .
     restart: unless-stopped
     ports:
       - "8000:8080"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - storage-data:/app/public/storage
+    # Only for local development
+    # volumes:
+    #   - storage-data:/app/public/storage
     depends_on:
-      - api-and-admin
+      - api
     networks:
       - frontend
 
-  db:
-    container_name: dazzle-db
-    image: cgr.dev/chainguard/mariadb
-    restart: unless-stopped
-    # Only needed on a local machine
-    # env_file:
-    #   - ./.env
-    environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
-      MARIADB_USER: ${DB_USERNAME}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
-      MARIADB_DATABASE: dazzle
-    ports:
-      - "3306:3306"
-    volumes:
-      - mariadbdata:/var/lib/mysql
-    networks:
-      - backend
-    healthcheck:
-      test: mariadb-admin ping -h 127.0.0.1 -u $$MARIADB_USER --password=$$MARIADB_PASSWORD
-      start_period: 5s
-      interval: 5s
-      timeout: 5s
-      retries: 50
+# Only for local development
+#  db:
+#    container_name: dazzle-db
+#    image: cgr.dev/chainguard/mariadb
+#    restart: unless-stopped
+#    env_file:
+#      - ./.env
+#    environment:
+#      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+#      MARIADB_USER: ${DB_USERNAME}
+#      MARIADB_PASSWORD: ${DB_PASSWORD}
+#      MARIADB_DATABASE: dazzle
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - mariadbdata:/var/lib/mysql
+#    networks:
+#      - backend
+#    healthcheck:
+#      test: mariadb-admin ping -h 127.0.0.1 -u $$MARIADB_USER --password=$$MARIADB_PASSWORD
+#      start_period: 5s
+#      interval: 5s
+#      timeout: 5s
+#      retries: 50
 
-volumes:
-  mariadbdata:
-  storage-data:
+# Only for local development
+# volumes:
+#   mariadbdata:
+#   storage-data:
 networks:
   frontend:
   backend:

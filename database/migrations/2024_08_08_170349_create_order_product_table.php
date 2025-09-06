@@ -20,6 +20,7 @@ return new class extends Migration {
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->integer('product_quantity');
+            $table->primary(['order_id', 'product_id']);
         });
     }
 

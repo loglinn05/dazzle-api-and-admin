@@ -97,21 +97,21 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
-import { useAuthStore } from "../../stores/authStore";
-import { useProductsStore } from "../../stores/productsStore";
-import { storeToRefs } from "pinia";
+import {onMounted} from "vue";
+import {useAuthStore} from "../../stores/authStore";
+import {useProductsStore} from "../../stores/productsStore";
+import {storeToRefs} from "pinia";
 import Tag from "primevue/tag";
-import { useHelpersStore } from "../../stores/helpersStore";
+import {useHelpersStore} from "../../stores/helpersStore";
 
 const helpersStore = useHelpersStore();
-const { formatCurrency } = helpersStore;
+const {formatCurrency} = helpersStore;
 
-const { hasPermissions } = useAuthStore();
+const {hasPermissions} = useAuthStore();
 
 const productsStore = useProductsStore();
-const { products, productsLoading } = storeToRefs(productsStore);
-const { getProducts } = productsStore;
+const {products, productsLoading} = storeToRefs(productsStore);
+const {getProducts} = productsStore;
 
 onMounted(() => {
     getProducts();
