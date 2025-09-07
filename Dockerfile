@@ -11,7 +11,7 @@ COPY ./ /app
 # Install Composer and NPM dependencies, mount cache
 RUN --mount=type=cache,target=/app/.npm npm set cache /app/.npm && npm install && npm run build && \
     composer install --no-progress --no-dev --prefer-dist --no-cache && \
-    mkdir -p /app/logs && touch /app/logs/access.log /app/logs/error.log && chown -R 1000:1000 /app/logs
+    mkdir -p /app/logs && touch /app/logs/access.log /app/logs/error.log
 
 
 # 2. Building the API
@@ -66,8 +66,10 @@ FROM cgr.dev/chainguard/nginx AS admin
 
 USER root
 
-COPY --from=builder /app/public /app
-COPY --from=builder /app/nginx.conf /etc/nginx/nginx.conf
-COPY --from=builder /app/logs app/logs
+COPY --chown=1000:1000 --from=builder /app/public /app
+COPY --chown=1000:1000 --from=builder /app/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=1000:1000 --from=builder /app/logs app/logs
 
 USER 1000
+
+EXPOSE 8080
