@@ -8,6 +8,12 @@ WORKDIR /app
 
 COPY ./ /app
 
+ARG VITE_API_BASE_URL_ARG
+ARG VITE_APP_NAME_ARG
+
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL_ARG
+ENV VITE_APP_NAME=$VITE_APP_NAME_ARG
+
 # Install Composer and NPM dependencies, mount cache
 RUN --mount=type=cache,target=/app/.npm npm set cache /app/.npm && npm install && npm run build && \
     composer install --no-progress --no-dev --prefer-dist --no-cache && \
@@ -64,11 +70,13 @@ CMD ["/app/run-app.sh"]
 
 FROM cgr.dev/chainguard/nginx AS admin
 
+WORKDIR /app
+
 USER root
 
 COPY --chown=1000:1000 --from=builder /app/public /app
 COPY --chown=1000:1000 --from=builder /app/nginx.conf /etc/nginx/nginx.conf
-COPY --chown=1000:1000 --from=builder /app/logs app/logs
+COPY --chown=1000:1000 --from=builder /app/logs /app/logs
 
 USER 1000
 
