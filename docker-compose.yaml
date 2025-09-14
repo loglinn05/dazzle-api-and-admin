@@ -1,7 +1,7 @@
 services:
   api:
     container_name: dazzle-api
-    image: dazzle-api
+    image: loglinn05/dazzle-api
     build:
       context: .
       target: api
@@ -79,7 +79,7 @@ services:
 
   admin:
     container_name: dazzle-admin
-    image: dazzle-admin
+    image: loglinn05/dazzle-admin
     build:
       context: .
       args:
