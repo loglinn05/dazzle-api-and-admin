@@ -1,0 +1,58 @@
+name: workflow.yml
+on: push
+
+jobs:
+  build-tag-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            loglinn05/dazzle-api
+            loglinn05/dazzle-admin
+          tags: |
+            type=raw,value=latest
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push images with Docker Compose
+        run: |
+          docker compose build
+          docker compose push
+
+      - name: Run Snyk vulnerability scanner
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command:
+            container monitor loglinn05/dazzle-api:latest
+
+      - name: Run Snyk vulnerability scanner
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command:
+            container monitor loglinn05/dazzle-admin:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-tag-push
+    steps:
+      - name: Install and configure the Koyeb CLI
+        uses: koyeb-community/koyeb-actions@v2
+        with:
+          api_token: "${{ secrets.KOYEB_API_TOKEN }}"
+
+      - name: Deploy dazzle-api-and-admin
+        run: koyeb services redeploy 2d6a5caa
