@@ -323,10 +323,6 @@ import {useMaterialsStore} from "../../stores/materialsStore.js";
 import {useSeasonsStore} from "../../stores/seasonsStore.js";
 import {storeToRefs} from "pinia";
 import {useToast} from "primevue/usetoast";
-import {useHelpersStore} from "../../stores/helpersStore";
-
-const helpersStore = useHelpersStore();
-const {isObject, isBoolean, getFileExtension} = helpersStore;
 
 const route = useRoute();
 
@@ -358,6 +354,7 @@ const colorSelectPassThrough = {
 let productData = new FormData();
 
 const product = ref({
+    id: 0,
     title: "",
     description: "",
     contents: "",
@@ -473,17 +470,28 @@ function gatherDataAndEditProduct() {
     }
     editProduct(productData, route.params.id);
     productData = new FormData();
+    localStorage.setItem("persistProduct", false)
+    localStorage.removeItem("editedProduct");
 }
 
 onBeforeMount(() => {
+    if (!localStorage.getItem("persistProduct")) {
+        localStorage.setItem("persistProduct", true);
+    }
     if (localStorage.getItem("editedProduct")) {
-        product.value = JSON.parse(localStorage.getItem("editedProduct"));
+        let editedProduct = JSON.parse(localStorage.getItem("editedProduct"));
+        if (editedProduct.id == route.params.id) product.value = editedProduct;
+        else {
+            console.log("getting another product")
+            getProduct(route.params.id);
+        }
+    } else {
+        getProduct(route.params.id);
     }
     getCategories();
     getManufacturers();
     getColors();
     getMaterials();
-    getProduct(route.params.id);
 });
 
 const productUnwatch = watch(
@@ -507,27 +515,33 @@ const productUnwatch = watch(
 const currentProductUnwatch = watch(
     currentProduct,
     (value) => {
+        console.log(value.normalFormat, value.normalFormat.images);
         if (value.normalFormat && value.normalFormat.images) {
             if (!localStorage.getItem("editedProduct")) {
                 product.value = value.normalFormat;
+            } else {
+                let editedProduct = JSON.parse(localStorage.getItem("editedProduct"));
+                if (editedProduct.id != route.params.id)
+                    product.value = value.normalFormat;
             }
             value.normalFormat.images.forEach((image, index) => {
-                axios
-                    .get(value.normalFormat.images[index].file_path, {
-                        responseType: "blob",
-                    })
-                    .then((response) => {
-                        let fileContent = response.data;
-                        let file = new File([fileContent], image.file_name, {
-                            type: "image/" + getFileExtension(image.file_name),
-                        });
-                        file.objectURL = URL.createObjectURL(fileContent);
+                fetch(image.file_path)
+                    .then((img) => img.blob())
+                    .then((blob) => {
+                        const fileName = image.file_name;
+                        const fileType = blob.type;
+
+                        const file = new File([blob], fileName, {type: fileType});
+
+                        const tempUrl = URL.createObjectURL(blob);
+
                         product.value.images[index] = {
                             id: index,
                             file: file,
                         };
+
                         imageURLs.value.push({
-                            URL: file.objectURL,
+                            URL: tempUrl,
                             imageId: index,
                         });
                     });
@@ -540,7 +554,7 @@ const currentProductUnwatch = watch(
 
 function persistProduct() {
     product.value.images = [];
-    localStorage.setItem("editedProduct", JSON.stringify(product.value));
+    if (localStorage.getItem("persistProduct") == "true") localStorage.setItem("editedProduct", JSON.stringify(product.value));
 }
 
 function clearOnCategoryChange() {

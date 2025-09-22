@@ -9,12 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminProductResource extends JsonResource
 {
-    private function prepareImages()
+    private function prepareImages($images)
     {
         $result = [];
-        foreach ($this->images as $image) {
-            // $image->file_path = Storage::url($image->file_path);
-            $image->file_path = Storage::temporaryUrl($image->file_path, now()->addMinutes(5));
+        foreach ($images as $image) {
+            $image->file_path = Storage::url($image->file_path);
             $result[] = $image;
         }
         return $result;
@@ -27,6 +26,8 @@ class AdminProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $sizes = $this->whenLoaded('sizes');
+        $seasons = $this->whenLoaded('seasons');
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -36,16 +37,23 @@ class AdminProductResource extends JsonResource
             'old_price' => $this->old_price,
             'number_in_stock' => $this->num_in_stock,
             'featured' => $this->featured ? true : false,
-            'images' => $this->prepareImages(),
+            'images' => $this->whenLoaded('images', function () {
+                $result = [];
+                foreach ($this->images as $image) {
+                    $image->file_path = Storage::url($image->file_path);
+                    $result[] = $image;
+                }
+                return $result;
+            }),
             'created_at' => Carbon::parse($this->created_at)->format('m/d/Y H:i:s'),
-            'category' => $this->category,
-            'subcategory' => $this->subcategory,
-            'type' => $this->type,
-            'manufacturer' => $this->manufacturer,
-            'sizes' => $this->when(count($this->sizes) > 0, $this->sizes),
-            'colors' => $this->colors,
-            'materials' => $this->materials,
-            'seasons' => $this->when(count($this->seasons) > 0, $this->seasons),
+            'category' => $this->whenLoaded('category'),
+            'subcategory' => $this->whenLoaded('subcategory'),
+            'type' => $this->whenLoaded('type'),
+            'manufacturer' => $this->whenLoaded('manufacturer'),
+            'sizes' => $this->when(count($sizes) > 0, $sizes),
+            'colors' => $this->whenLoaded('colors'),
+            'materials' => $this->whenLoaded('materials'),
+            'seasons' => $this->when(count($seasons) > 0, $seasons),
         ];
     }
 }

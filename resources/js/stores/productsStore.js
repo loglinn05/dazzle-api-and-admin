@@ -1,12 +1,12 @@
-import { defineStore, storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
-import { useToast } from "primevue/usetoast";
-import { useHelpersStore } from "./helpersStore";
+import {defineStore} from "pinia";
+import {useRouter} from "vue-router";
+import {ref} from "vue";
+import {useToast} from "primevue/usetoast";
+import {useHelpersStore} from "./helpersStore";
 
 export const useProductsStore = defineStore("products", () => {
     const helpersStore = useHelpersStore();
-    const { handleError } = helpersStore;
+    const {handleError} = helpersStore;
 
     const toast = useToast();
     const router = useRouter();

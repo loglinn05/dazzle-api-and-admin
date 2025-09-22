@@ -49,7 +49,7 @@
             <Column header="Image">
                 <template #body="slotProps">
                     <img
-                        :src="slotProps.data.images[0].file_path"
+                        :src="slotProps.data.image"
                         class="w-24 min-w-24 rounded shrink-0"
                     />
                 </template>

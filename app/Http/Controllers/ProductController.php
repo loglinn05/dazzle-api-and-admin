@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\AdminProductListResource;
 use App\Http\Resources\AdminProductResource;
 use App\Http\Resources\ClientProductResource;
 use App\Models\Category;
@@ -19,21 +20,25 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return AdminProductResource::collection(Product::all());
+        $products = Product::with(['category', 'images'])->get();
+        return AdminProductListResource::collection($products);
     }
 
     public function getProducts(Request $request, $subcategory_id = null)
     {
         if ($subcategory_id != null && is_integer((int)$subcategory_id)) {
-            return ClientProductResource::collection(Product::where('subcategory_id', $subcategory_id)->withFilters()->get());
+            $products = Product::where('subcategory_id', $subcategory_id)->withFilters()->get();
+            return ClientProductResource::collection($products);
         } else {
             if (is_bool($request->new) && $request->new) {
-                return ClientProductResource::collection(Product::where('created_at', '>=', Carbon::now()->subMonth())->orderByDesc('created_at')->limit(8)->get());
+                $newProducts = Product::where('created_at', '>=', Carbon::now()->subMonth())->orderByDesc('created_at')->limit(8)->get();
+                return ClientProductResource::collection($newProducts);
             }
             if (is_bool($request->featured) && $request->featured) {
-                return ClientProductResource::collection(Product::where('featured', true)->orderByDesc('created_at')->limit(8)->get());
+                $featuredProducts = Product::where('featured', true)->orderByDesc('created_at')->limit(8)->get();
+                return ClientProductResource::collection($featuredProducts);
             }
-            return ClientProductResource::collection(Product::where('subcategory_id', 2)->get());
+            return response(json_encode(["message" => "Subcategory ID is not defined"]), 400);
         }
     }
 
@@ -42,7 +47,7 @@ class ProductController extends Controller
         if (is_integer((int)$request->product_id)) {
             return new ClientProductResource(Product::find($request->product_id));
         } else {
-            abort(400, 'Invalid product ID');
+            return response(json_encode(["message" => "Invalid product ID"]), 400);
         }
     }
 
@@ -95,7 +100,8 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        return new AdminProductResource(Product::find($id));
+        $product = Product::with(['images', 'category', 'subcategory', 'type', 'manufacturer', 'sizes', 'colors', 'materials', 'seasons'])->find($id);
+        return new AdminProductResource($product);
     }
 
     public function update(ProductRequest $request, $id)
