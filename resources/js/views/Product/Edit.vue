@@ -135,6 +135,7 @@
                                 <img
                                     :src="imageURL.URL"
                                     class="absolute w-full h-full object-cover object-center"
+                                    crossorigin="anonymous"
                                 />
                                 <button
                                     class="absolute top-0 right-0 border-none w-6 h-6 flex justify-center items-center bg-black/60 text-white"
@@ -480,9 +481,11 @@ onBeforeMount(() => {
     }
     if (localStorage.getItem("editedProduct")) {
         let editedProduct = JSON.parse(localStorage.getItem("editedProduct"));
-        if (editedProduct.id == route.params.id) product.value = editedProduct;
-        else {
-            console.log("getting another product")
+        if (editedProduct.id == route.params.id) {
+            product.value = editedProduct;
+            let imgurls = JSON.parse(localStorage.getItem("imageURLs"));
+            getImagesData(imgurls)
+        } else {
             getProduct(route.params.id);
         }
     } else {
@@ -512,40 +515,44 @@ const productUnwatch = watch(
     {deep: true}
 );
 
+function getImagesData(images) {
+    images.forEach(async (image, index) => {
+        fetch(image.file_path)
+            .then((img) => img.blob())
+            .then((blob) => {
+                const fileName = image.file_name;
+                const fileType = blob.type;
+
+                const file = new File([blob], fileName, {type: fileType});
+
+                product.value.images[index] = {
+                    id: index,
+                    file: file,
+                };
+
+                imageURLs.value.push({
+                    URL: image.file_path,
+                    imageId: index,
+                });
+            });
+    });
+}
+
 const currentProductUnwatch = watch(
     currentProduct,
     (value) => {
-        console.log(value.normalFormat, value.normalFormat.images);
         if (value.normalFormat && value.normalFormat.images) {
             if (!localStorage.getItem("editedProduct")) {
                 product.value = value.normalFormat;
+                localStorage.setItem("imageURLs", JSON.stringify(product.value.images));
             } else {
                 let editedProduct = JSON.parse(localStorage.getItem("editedProduct"));
-                if (editedProduct.id != route.params.id)
+                if (editedProduct.id != route.params.id) {
                     product.value = value.normalFormat;
+                    localStorage.setItem("imageURLs", JSON.stringify(product.value.images));
+                }
             }
-            value.normalFormat.images.forEach((image, index) => {
-                fetch(image.file_path)
-                    .then((img) => img.blob())
-                    .then((blob) => {
-                        const fileName = image.file_name;
-                        const fileType = blob.type;
-
-                        const file = new File([blob], fileName, {type: fileType});
-
-                        const tempUrl = URL.createObjectURL(blob);
-
-                        product.value.images[index] = {
-                            id: index,
-                            file: file,
-                        };
-
-                        imageURLs.value.push({
-                            URL: tempUrl,
-                            imageId: index,
-                        });
-                    });
-            });
+            getImagesData(value.normalFormat.images);
             currentProductUnwatch();
         }
     },
@@ -554,7 +561,9 @@ const currentProductUnwatch = watch(
 
 function persistProduct() {
     product.value.images = [];
-    if (localStorage.getItem("persistProduct") == "true") localStorage.setItem("editedProduct", JSON.stringify(product.value));
+    if (localStorage.getItem("persistProduct") == "true") {
+        localStorage.setItem("editedProduct", JSON.stringify(product.value));
+    }
 }
 
 function clearOnCategoryChange() {
