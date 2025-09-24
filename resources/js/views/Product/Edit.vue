@@ -515,27 +515,49 @@ const productUnwatch = watch(
     {deep: true}
 );
 
+// A helper function to convert a Data URL string to a Blob
+function dataURLtoBlob(dataurl) {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {type: mime});
+}
+
 function getImagesData(images) {
-    images.forEach(async (image, index) => {
-        fetch(image.file_path)
-            .then((img) => img.blob())
-            .then((blob) => {
-                const fileName = image.file_name;
-                const fileType = blob.type;
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/product/${route.params.id}/images`)
+        .then(response => {
+            // The JSON data is directly on response.data
+            const imagesData = response.data;
 
-                const file = new File([blob], fileName, {type: fileType});
+            // Clear existing arrays to prevent duplicates
+            product.value.images = [];
+            imageURLs.value = [];
 
-                product.value.images[index] = {
-                    id: index,
+            imagesData.forEach((image) => {
+                const dataUrl = image.image_blob;
+                const blob = dataURLtoBlob(dataUrl);
+
+                const file = new File([blob], image.file_name, {type: blob.type});
+
+                product.value.images.push({
+                    id: image.id,
                     file: file,
-                };
+                });
 
                 imageURLs.value.push({
-                    URL: image.file_path,
-                    imageId: index,
+                    URL: dataUrl,
+                    imageId: image.id,
                 });
             });
-    });
+        })
+        .catch(error => {
+            console.error("Error fetching images:", error);
+        });
 }
 
 const currentProductUnwatch = watch(

@@ -142,4 +142,26 @@ class ProductController extends Controller
 
         $product->delete();
     }
+
+    public function getProductImages(Request $request)
+    {
+        $images = Product::find($request->id)->images;
+        $imageBlobs = [];
+
+        foreach ($images as $image) {
+            $fileContent = Storage::get($image->file_path);
+            $mimeType = Storage::mimeType($image->file_path);
+            $base64Data = base64_encode($fileContent);
+
+            $dataUrl = 'data:' . $mimeType . ';base64,' . $base64Data;
+
+            $imageBlobs[] = [
+                'file_name' => explode("_", $image->file_name, 2)[1],
+                'id' => $image->id,
+                'image_blob' => $dataUrl
+            ];
+        }
+
+        return response()->json($imageBlobs);
+    }
 }
