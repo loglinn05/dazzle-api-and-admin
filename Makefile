@@ -1,15 +1,15 @@
-.PHONY: cb
-cb:
-	docker compose build
-
 .PHONY: cub
 cub:
-	docker compose up --build
+	docker compose -f docker-compose.yaml -f docker-compose-dev.yaml up --build
+
+.PHONY: cub-prod
+cub-prod:
+	docker compose -f docker-compose.yaml -f docker-compose-prod.yaml up --build
 
 .PHONY: cd
 cd:
-	docker compose down
+	docker compose -f docker-compose.yaml -f docker-compose-dev.yaml down
 
-.PHONY: db
-db:
-	docker container exec -it dazzle-db mariadb -u example -p"password"
+.PHONY: cd-prod
+cd-prod:
+	docker compose -f docker-compose.yaml -f docker-compose-prod.yaml down

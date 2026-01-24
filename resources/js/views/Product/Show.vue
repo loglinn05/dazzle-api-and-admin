@@ -12,10 +12,8 @@
         />
         <DataTable
             :value="currentProduct.tableFormat"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_th]:text-violet-700 [&_td]:text-violet-700"
             :pt="{ column: { bodycell: { class: 'align-top' } } }"
             :loading="productsLoading"
-            pt:loadingIcon:class="text-pink-500"
             showGridlines
         >
             <template #header>

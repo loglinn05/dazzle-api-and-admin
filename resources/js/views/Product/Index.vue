@@ -4,9 +4,6 @@
             :value="products"
             :loading="productsLoading"
             class="w-full overflow-auto"
-            pt:loadingIcon:class="text-pink-500"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_th]:text-violet-700 [&_td]:text-violet-700"
-            :pt:footer:class="products && products.length > 0 ? '' : 'hidden'"
             showGridlines
             scrollable
             scrollHeight="flex"

@@ -10,13 +10,7 @@
             link
             @click="$router.push(`/colors`)"
         />
-        <DataTable
-            :value="currentColor.tableFormat"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
-            :loading="colorsLoading"
-            pt:loadingIcon:class="text-pink-500"
-            showGridlines
-        >
+        <DataTable :value="currentColor.tableFormat" :loading="colorsLoading" showGridlines>
             <template #header>
                 <div
                     class="flex sm:flex-row flex-col items-center gap-3 w-full"

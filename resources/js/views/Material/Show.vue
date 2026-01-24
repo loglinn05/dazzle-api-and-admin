@@ -10,13 +10,7 @@
             link
             @click="$router.push(`/materials`)"
         />
-        <DataTable
-            :value="currentMaterial.tableFormat"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
-            :loading="materialsLoading"
-            pt:loadingIcon:class="text-pink-500"
-            showGridlines
-        >
+        <DataTable :value="currentMaterial.tableFormat" :loading="materialsLoading" showGridlines>
             <template #header>
                 <div
                     class="flex sm:flex-row flex-col items-center gap-3 w-full"

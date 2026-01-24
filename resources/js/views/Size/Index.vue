@@ -3,9 +3,6 @@
         <DataTable
             :value="sizes"
             :loading="sizesLoading"
-            pt:loadingIcon:class="text-pink-500"
-            :pt:footer:class="sizes && sizes.length > 0 ? '' : 'hidden'"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
             showGridlines
             scrollable
         >

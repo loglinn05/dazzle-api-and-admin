@@ -12,9 +12,7 @@
         />
         <DataTable
             :value="currentSize.tableFormat"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
             :loading="sizesLoading"
-            pt:loadingIcon:class="text-pink-500"
             showGridlines
         >
             <template #header>

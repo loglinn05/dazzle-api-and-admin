@@ -2,12 +2,15 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
+import {useHelpersStore} from "./helpersStore";
 
 export const useAuthStore = defineStore(
     "auth",
     () => {
         const toast = useToast();
         const router = useRouter();
+        const helpersStore = useHelpersStore();
+        const { handleError } = helpersStore;
 
         const currentUser = ref({
             name: "",
@@ -36,9 +39,7 @@ export const useAuthStore = defineStore(
                     router.push("/");
                 })
                 .catch(function (error) {
-                    if (error.response.data.errors) {
-                        displayValidationErrors(error.response.data.errors);
-                    } else if (
+                    if (
                         error.response.status == 401 &&
                         error.response.data.message
                     ) {
@@ -48,7 +49,7 @@ export const useAuthStore = defineStore(
                             life: 5000,
                         });
                     } else {
-                        console.error(error);
+                        handleError(error);
                     }
                 });
         }

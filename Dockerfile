@@ -1,6 +1,6 @@
 # 1. Building the app
 
-FROM bitnami/laravel:12.0.3 AS builder
+FROM shinsenter/laravel:dev-php8.1-nginx AS builder
 
 USER root
 

@@ -1,0 +1,13 @@
+FROM shinsenter/laravel:dev-php8.2-nginx
+
+WORKDIR /var/www/html
+
+COPY ./composer*.json ./
+
+RUN composer install
+
+COPY . .
+
+EXPOSE 80
+EXPOSE 443
+EXPOSE 443/udp

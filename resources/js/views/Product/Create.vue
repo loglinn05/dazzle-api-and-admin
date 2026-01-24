@@ -93,7 +93,7 @@
             <div
                 class="flex items-center after:content-['*'] after:ml-0.5 after:text-red-500"
             >
-                <InputSwitch id="featured" v-model="product.featured"/>
+                <ToggleSwitch id="featured" v-model="product.featured"/>
                 <label
                     for="featured"
                     class="ms-2 sm:text-lg text-base font-text text-violet-700"
@@ -291,7 +291,7 @@
 
 <script setup>
 import {onBeforeMount, onBeforeUnmount, ref, watch} from "vue";
-import InputSwitch from "primevue/inputswitch";
+import ToggleSwitch from "primevue/toggleswitch";
 import FileUpload from "primevue/fileupload";
 import MultiSelect from "primevue/multiselect";
 import InputNumber from "primevue/inputnumber";
@@ -311,19 +311,19 @@ import {storeToRefs} from "pinia";
 const toast = useToast();
 
 const colorSelectPassThrough = {
-    panel: {
+    overlay: {
         class: "p-3",
     },
     header: {
         class: "p-0 mb-3",
     },
     list: {
-        class: "sm:w-[22rem] w-64 flex flex-row flex-wrap gap-3",
+        class: "sm:w-[22rem] w-64 flex flex-row flex-wrap gap-3 p-0",
     },
-    item: {
+    option: {
         class: "relative flex justify-center items-center p-0 m-0",
     },
-    itemCheckbox: {
+    pcOptionCheckbox: {
         root: {
             class: "absolute top-0 left-0 w-full h-full",
         },

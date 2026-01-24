@@ -1,14 +1,6 @@
 <template>
     <Layout>
-        <DataTable
-            :value="materials"
-            :loading="materialsLoading"
-            pt:loadingIcon:class="text-pink-500"
-            :pt:footer:class="materials && materials.length > 0 ? '' : 'hidden'"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
-            showGridlines
-            scrollable
-        >
+        <DataTable :value="materials" :loading="materialsLoading" showGridlines scrollable>
             <template #header>
                 <div
                     class="flex sm:flex-row flex-col gap-5 items-center sm:justify-between justify-center"

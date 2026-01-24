@@ -13,10 +13,8 @@
         <DataTable
             :value="currentOrder.tableFormat"
             class="mb-10"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
             :pt="{ column: { bodycell: { class: 'align-top' } } }"
             :loading="ordersLoading"
-            pt:loadingIcon:class="text-pink-500"
             showGridlines
         >
             <template #header>
@@ -63,10 +61,8 @@
         </h2>
         <DataTable
             :value="currentOrder.normalFormat.products"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
             :pt="{ column: { bodycell: { class: 'align-top' } } }"
             :loading="ordersLoading"
-            pt:loadingIcon:class="text-pink-500"
             showGridlines
         >
             <Column header="ID" field="id"></Column>

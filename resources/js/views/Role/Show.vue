@@ -12,15 +12,11 @@
         />
         <DataTable
             :value="currentRole.tableFormat"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
             :loading="rolesLoading"
-            pt:loadingIcon:class="text-pink-500"
             showGridlines
         >
             <template #header>
-                <div
-                    class="flex sm:flex-row flex-col items-center gap-3 w-full"
-                >
+                <div class="flex sm:flex-row flex-col items-center gap-3 w-full">
                     <Button
                         v-if="hasPermissions(['update roles'])"
                         icon="pi pi-pencil"

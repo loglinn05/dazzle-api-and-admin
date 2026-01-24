@@ -100,7 +100,7 @@
                     class="flex after:content-['*'] after:ml-0.5 after:text-red-500"
                 >
                     <div class="flex items-center">
-                        <InputSwitch id="featured" v-model="product.featured"/>
+                        <ToggleSwitch id="featured" v-model="product.featured"/>
                         <label
                             for="numInStock"
                             class="ms-2 sm:text-lg text-base font-text text-violet-700"
@@ -308,7 +308,7 @@
 <script setup>
 import {onBeforeMount, onBeforeUnmount, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import InputSwitch from "primevue/inputswitch";
+import ToggleSwitch from "primevue/toggleswitch";
 import FileUpload from "primevue/fileupload";
 import MultiSelect from "primevue/multiselect";
 import InputNumber from "primevue/inputnumber";

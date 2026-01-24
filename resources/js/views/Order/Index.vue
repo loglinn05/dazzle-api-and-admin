@@ -1,14 +1,6 @@
 <template>
     <Layout>
-        <DataTable
-            :value="orders"
-            :loading="ordersLoading"
-            pt:loadingIcon:class="text-pink-500"
-            :pt:footer:class="orders && orders.length > 0 ? '' : 'hidden'"
-            pt:wrapper:class="[&_*]:sm:text-lg [&_*]:text-base [&_*]:font-text [&_*]:text-violet-700"
-            showGridlines
-            scrollable
-        >
+        <DataTable :value="orders" :loading="ordersLoading" showGridlines scrollable>
             <template #header>
                 <h1 class="sm:text-4xl text-3xl text-pink-700 font-header">
                     Orders

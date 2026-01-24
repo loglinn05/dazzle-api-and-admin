@@ -1,0 +1,38 @@
+services:
+  api:
+    image: dazzle-api
+    env_file:
+      - ./.env
+    build:
+      context: .
+      dockerfile: DockerfileApi.dev
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - type: bind
+        source: .
+        target: /var/www/html
+      - type: volume
+        target: /var/www/html/vendor
+      - type: volume
+        target: /var/www/html/node_modules
+
+  admin:
+    image: dazzle-admin
+    build:
+      context: .
+      dockerfile: DockerfileAdmin.dev
+    env_file:
+      - ./.env
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+      - type: volume
+        target: /app/vendor
+      - type: volume
+        target: /app/node_modules
+    ports:
+      - "5173:5173"
